@@ -13,9 +13,7 @@ Route::group([ 'prefix' => 'users' ],function (){
 
 Route::group(['prefix' => 'auth'], function (){
     //== authentication
-    Route::post('/signup', function (){
-        return 'create a new user account';
-    });
+
     Route::post('/checkpass', function (){
         return 'checks users password ';
     });
@@ -26,10 +24,8 @@ Route::group(['prefix' => 'auth'], function (){
     Route::post('/recover', function (){
         return 'send a password rest email';
     });
-
-    Route::post('/login', function (){
-        return 'all users';
-    });
+    Route::post('/register', 'AuthController@register')->name('register');
+    Route::post('/login', 'AuthController@login')->name('login');
 });
 
 Route::group(['prefix' => 'designs'], function(){
