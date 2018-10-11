@@ -10,7 +10,15 @@ Route::group([ 'prefix' => 'users' ],function (){
     Route::post('/likes/{user}', 'UsersControllers@likes');
 
 });
-
+Route::group([
+    'namespace' => 'Auth',
+//    'middleware' => 'auth:api',
+    'prefix' => 'password'
+], function () {
+    Route::post('create', 'PasswordResetController@create');
+    Route::get('find/{token}', 'PasswordResetController@find');
+    Route::post('reset', 'PasswordResetController@reset');
+});
 Route::group(['prefix' => 'auth'], function (){
     //== authentication
 

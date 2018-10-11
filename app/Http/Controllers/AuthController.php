@@ -22,16 +22,11 @@ class AuthController extends Controller
            'password'   => 'required|min:8'
         ]);
         $user = new User([
-            'name' => $request->input('name'),
+            'username' => $request->input('username'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password'))
         ]);
         if ($user->save()){
-            $user->signin = [
-                'href' => 'api/v2/signin',
-                'method' => 'POST',
-                'params' => 'email, password'
-            ];
             return response()->json(['msg' => 'User created', 'user' => $user], 200);
         }
         return response()->json(['msg' => 'an error occured'], 404);
