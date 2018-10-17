@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -12,6 +11,7 @@ use App\PasswordReset;
 
 class PasswordResetController extends Controller
 {
+
     /**
      * Create token password reset
      *
@@ -37,7 +37,7 @@ class PasswordResetController extends Controller
         );
         if ($user && $passwordReset)
             $user->notify(
-                new PasswordResetRequest($passwordReset->token)
+                new PasswordResetRequest($passwordReset->token, $user->username)
             );
         return response()->json([
             'message' => 'We have e-mailed your password reset link!'
@@ -57,19 +57,18 @@ class PasswordResetController extends Controller
         $passwordReset = PasswordReset::where('token', $token)
             ->first();
 
-        if (!$passwordReset)
-            return response()->json([
-                'message' => 'This password reset token is invalid.'
-            ], 404);
+        if (!$passwordReset){
+//            This password reset token is invalid.
+            abort(404);
+        }
+
 
         if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
             $passwordReset->delete();
-            return response()->json([
-                'message' => 'This password reset token is invalid.'
-            ], 404);
+//            'This password reset token is invalid.'
+            abort(404);
         }
-        return response()->json($passwordReset);
-
+        return view('auth.reset_password_form', compact('passwordReset'));
     }
 
 
@@ -83,14 +82,13 @@ class PasswordResetController extends Controller
      * @return [string] message
      * @return [json] user object
      */
-    public function reset(Request $request)
+    protected function reset($request)
     {
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string',
+            'password' => 'required|string|confirmed',
             'token' => 'required|string'
         ]);
-
         $passwordReset = PasswordReset::where([
             ['token', $request->token],
             ['email', $request->email]
@@ -113,6 +111,18 @@ class PasswordResetController extends Controller
         $user->save();
         $passwordReset->delete();
         $user->notify(new PasswordResetSuccess($passwordReset));
-        return response()->json($user);
+        return $user;
+    }
+
+    public function resetApi(Request $request)
+    {
+        $user = $this->reset($request);
+        return response()->json($user, 201);
+    }
+    public function resetWeb(Request $request)
+    {
+        $user = $this->reset($request);
+        session()->flash('changed_pass_msg' , "رمز عبور شما با موفقیت تغییر کرد");
+        return view('welcome');
     }
 }

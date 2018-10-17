@@ -16,10 +16,11 @@ class CreateDesignsTable extends Migration
         Schema::create('designs', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->string('design_url');
-            $table->string('download_url');
+            $table->string('image');
+            $table->string('small_image');
+            $table->integer('original_width');
+            $table->integer('original_height');
             $table->boolean('is_download_allowed');
-            $table->string('download_resolution');
             $table->timestamps();
 
             // one to many relationship

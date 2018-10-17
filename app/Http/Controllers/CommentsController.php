@@ -3,25 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Design;
 use Illuminate\Http\Request;
 
 class CommentsController extends Controller
 {
-    public function show(Comment $comment)
+    public function __construct()
     {
-        return $comment;
+        $this->middleware('auth:api');
     }
 
-    public function update()
+    public function show(Comment $comment)
     {
-        return 'updates a comment';
+        return $comment->with('user', 'design')->get();
     }
-    public function delete()
+
+    public function update(Request $request, Comment $comment)
     {
-        return 'deletes a comment';
+        if (request()->user()->can('modify', $comment)) {
+            $this->validate($request, [
+                'content' => 'required|String'
+            ]);
+            $comment->content = $request->input('content');
+            if ($comment->save()) {
+                $response = [
+                    'message' => 'something went wrong',
+                    'comment' => $comment->with('user', 'design')->get()
+                ];
+                return response()->json($response, 200);
+            }
+            return response()->json(['message' => 'something went wrong please try again'], 500);
+        }else{
+            return response()->json(['message' => 'This comment does not belong to you'], 500);
+        }
     }
-    public function store()
+
+    public function delete(Comment $comment)
     {
-        return 'stores a comment';
+        if (request()->user()->can('modify', $comment)) {
+            if ($comment->delete()){
+                return response()->json(['message' => 'comment was successfully deleted'], 200);
+            }
+            return response()->json(['message' => 'something went wrong'], 404);
+        }
+        return response()->json(['message' => 'you are not allowed to delete this comment'], 401);
+    }
+
+    public function store(Request $request, Design $design)
+    {
+        $this->validate($request, [
+            'content' => 'required|String'
+        ]);
+        $comment = new Comment();
+        $comment->user_id = $request->user()->id;
+        $comment->design_id = $design->id;
+        $comment->content = $request->input('content');
+        if ($comment->save()){
+            $response = [
+                'message' => 'comment was successfully created',
+                'comment' => $comment->with('user', 'design')->get()
+            ];
+            return response()->json($response, 200);
+        }
+        return response()->json(['message' => 'something went wrong please try again'], 404);
+
     }
 }

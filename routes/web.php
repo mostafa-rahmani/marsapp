@@ -10,7 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
+Route::get('find/{token}', 'auth\PasswordResetController@find');
+Route::post('reset', 'auth\PasswordResetController@resetWeb');
+Route::get('/', function (){
     return view('welcome');
-});
+})->name('home');

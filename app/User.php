@@ -6,11 +6,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Design;
+use Laravel\Passport\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +19,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password',
+        'password', 'username', 'profile_image', 'profile_background', 'instagram', 'email', 'bio'
     ];
 
     /**
@@ -75,5 +76,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function designs(){
         return $this->hasMany(Design::class);
+    }
+
+    public function owns(Design $design)
+    {
+        return $this->id == $design->user_id;
     }
 }
