@@ -2,11 +2,16 @@
 
 namespace App;
 
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 
 class Design extends Model
 {
+    use Searchable;
+    protected $primaryKey = 'id';
+    protected $table = 'designs';
+
     protected $fillable = ['title', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
 
     public function likes()
@@ -29,5 +34,10 @@ class Design extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function searchableAs()
+    {
+        return 'design_index';
     }
 }

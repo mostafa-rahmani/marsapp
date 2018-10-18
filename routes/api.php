@@ -35,6 +35,7 @@ Route::group(['prefix' => 'designs'], function(){
     Route::get('/', 'DesignsController@index');
     Route::get('/{design}', 'DesignsController@show');
     Route::get('/{design}/download', 'DesignsController@download');
+    Route::delete('/{design}/delete', 'DesignsController@delete');
     Route::post('/list', 'DesignsController@list');
     Route::post('/create', 'DesignsController@store');
     Route::post('/{design}/update', 'DesignsController@update');
@@ -51,6 +52,6 @@ Route::group(['prefix' => 'comments'], function (){
 
 });
 
-Route::post('/search', 'UsersController@search');
+Route::post('/search', 'SearchController@search');
 
 

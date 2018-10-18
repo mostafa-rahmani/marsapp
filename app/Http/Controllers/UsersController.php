@@ -110,9 +110,8 @@ class UsersController extends Controller
             ];
             return response()->json($response, 201);
 
-
-
     }
+
 
     /**
      * @param User $user
@@ -141,14 +140,6 @@ class UsersController extends Controller
         return response()->json($response, 200);
     }
 
-    public function search(Request $request)
-    {
-        $this->validate($request, [
-            'query' => 'required|String'
-        ]);
-
-        
-    }
 
     protected function userOBJ($user){
         if (isset($user->profile_image)){

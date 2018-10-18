@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Design;
-use App\User;
+use Illuminate\Pagination\Paginator;
 use App\Http\Requests\DesignRequest;
 use Illuminate\Auth\Access\Gate;
 use Intervention\Image\Facades\Image;
@@ -33,7 +33,7 @@ class DesignsController extends Controller
 
     public function index()
     {
-        $designs = Design::all();
+        $designs = Design::paginate(2);
         foreach ($designs as $design){
             $this->DesignOBJ($design);
         }
