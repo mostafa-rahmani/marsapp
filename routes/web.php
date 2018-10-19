@@ -17,6 +17,18 @@ Route::get('/', function (){
 })->name('home');
 Route::group(['prefix'=> 'admin'], function(){
 	Route::get('/', function (){
-		return view('admin.main');
+		return view('admin.dashboard');
+	});
+	Route::get('/settings', function(){
+		return view('admin.settings');
+	});
+	Route::get('/users', function(){
+		return view('admin.users');
+	});
+	Route::get('/users/{user}', function(){
+		return view('admin.user');
+	});
+	Route::get('/users/{user}/edit', function(){
+		return view('admin.user_edit');
 	});
 });
