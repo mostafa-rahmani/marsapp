@@ -15,3 +15,8 @@ Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', function (){
     return view('welcome');
 })->name('home');
+Route::group(['prefix'=> 'admin'], function(){
+	Route::get('/', function (){
+		return view('admin.main');
+	});
+});
