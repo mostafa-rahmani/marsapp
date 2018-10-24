@@ -15,7 +15,7 @@ class CreateDesignsTable extends Migration
     {
         Schema::create('designs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->string('description');
             $table->string('image');
             $table->string('small_image');
             $table->integer('original_width');

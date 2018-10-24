@@ -12,7 +12,7 @@ class Design extends Model
     protected $primaryKey = 'id';
     protected $table = 'designs';
 
-    protected $fillable = ['title', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
+    protected $fillable = ['description', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
 
     public function likes()
     {
