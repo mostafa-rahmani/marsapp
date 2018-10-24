@@ -12,23 +12,21 @@
 */
 Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
-Route::get('/', function (){
-    return view('welcome');
-})->name('home');
+Route::get('/', 'AdminController@home')->name('home');
+
 Route::group(['prefix'=> 'admin'], function(){
-	Route::get('/', function (){
-		return view('admin.dashboard');
-	});
-	Route::get('/settings', function(){
-		return view('admin.settings');
-	});
-	Route::get('/users', function(){
-		return view('admin.users');
-	});
-	Route::get('/users/{user}', function(){
-		return view('admin.user');
-	});
-	Route::get('/users/{user}/edit', function(){
-		return view('admin.user_edit');
-	});
+	Route::get('/', 'AdminController@admin');
+	Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');
+	Route::post('/login', 'Admin\AuthController@adminLogin');
+	Route::get('/logout', 'Admin\AuthController@adminLogout');
+	Route::get('/password/change', 'Admin\AuthController@changePass');
+	Route::post('/password/change', 'Admin\AuthController@changePass');
+	Route::get('/settings', 'AdminController@adminSettings');
+	Route::post('/settings' , 'AdminController@updateSettings');
+	Route::get('/users', 'AdminController@allUsers');
+	Route::get('/users/{user}', 'AdminController@showUser');
+	Route::get('/users/{user}/block', 'AdminController@blockUser');
+	Route::get('/designs/{design}/block', 'AdminController@blockDesign');
+    Route::post('/roles/manager', 'AdminController@toggleManager');
+    Route::get('/roles/manager/{user}', 'AdminController@removeManager');
 });

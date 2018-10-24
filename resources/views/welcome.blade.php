@@ -4,10 +4,8 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/app.css')  }}">
 @section('navbar')
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-
-            <h1><a class="navbar-brand" href="#">پرتقال</a></h1>
             <button class="navbar-toggler border-0" type="button"
                     data-toggle="collapse"
                     data-target="#navbarSupportedContent"
@@ -19,32 +17,32 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">درباره ما</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">دانلود اپ</a>
+                        <a class="nav-link" href="http://{{ $data->app_download_url }}">دانلود اپ</a>
                     </li>
                 </ul>
+                <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">پرتقال</a></h1>
             </div>
         </div>
   </nav>
 @endsection
 @section('content')
   <div class="container">
-    
-    @if($flash = session('changed_pass_msg'))
-        <p class="alert alert-success" id="flash_message">{{ $flash }}</p>
-    @endif
-
     <div id="landing-page" class="d-flex flex-column justify-content-center">
-       <div class="row">
-           <div class="col-md-3"></div>
-           <div class="col-md-6 text-center">
-               <h1 class="text-center my-5">پرتقال دنیایی برای شکوفا شدن</h1>
-               <p class="text-center">طراح هستید یا نقاش و یا شاید عکاس، اپ پرتقال رو دانلود کنید با جامعه ای بزرگ از ایده ها و تفکرات دیگر متصل شوید. کار های خود را به اشتراک بگذارید و محبوب شوید</p>
-               <a href="" class="btn px-5 btn-info text-white">دانلود اپ اندروید</a>
+        @if($flash = session('changed_pass_msg'))
+            <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
+        @endif
+        @if($flash = session('message'))
+            <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
+        @endif
+       <div class="row py-4">
+           <div class="col-lg-6 text-center"></div>
+           <div class="col-lg-6 text-center d-flex flex-column">
+               <div class="my-5">
+                   <h1 class="text-center my-5">{{ $data->landing_title }}</h1>
+                   <p class="text-center">{{ $data->landing_description }}</p>
+                   <a href="http://{{ $data->app_download_url }}" class="px-5 mx-auto download-btn text-white">دانلود اپ اندروید</a>
+               </div>
            </div>
-           <div class="col-md-3"></div>
        </div>
     </div>
   </div>

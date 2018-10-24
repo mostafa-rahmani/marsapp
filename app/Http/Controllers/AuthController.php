@@ -28,6 +28,8 @@ class AuthController extends Controller
             'password' => bcrypt($request->input('password'))
         ]);
         if ($user->save()){
+            // attach user role to new registered user
+            $user->roles()->attach(2);
             return response()->json(['msg' => 'User created', 'user' => $user], 200);
         }
         return response()->json(['msg' => 'some thing went wrong try again'], 404);

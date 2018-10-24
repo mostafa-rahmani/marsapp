@@ -33,7 +33,7 @@ class DesignsController extends Controller
 
     public function index()
     {
-        $designs = Design::paginate(2);
+        $designs = Design::paginate(20);
         foreach ($designs as $design){
             $this->DesignOBJ($design);
         }

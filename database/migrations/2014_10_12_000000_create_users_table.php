@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('bio')->nullable();
             $table->string('instagram')->nullable();
             $table->string('profile_background')->nullable();
+            $table->boolean('blocked')->nullable()->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

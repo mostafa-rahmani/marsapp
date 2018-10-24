@@ -21,6 +21,7 @@ class CreateDesignsTable extends Migration
             $table->integer('original_width');
             $table->integer('original_height');
             $table->boolean('is_download_allowed');
+            $table->boolean('blocked')->nullable()->default(0);
             $table->timestamps();
 
             // one to many relationship

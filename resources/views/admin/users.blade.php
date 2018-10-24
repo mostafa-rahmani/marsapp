@@ -19,44 +19,16 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td><a href="#" class="btn-link">Mark</a></td>
-        <td>Otto</td>
-        <td><a href="#" class="btn-link">@mdo</a></td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td><a href="#" class="btn-link">Jacob</a></td>
-        <td>Thornton</td>
-        <td><a href="#" class="btn-link">@fat</a></td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td><a href="#" class="btn-link">Larry</a></td>
-        <td>the Bird</td>
-        <td><a href="#" class="btn-link">@twitter</a></td>
-      </tr>
+      @foreach($users as $user)
+          <tr>
+              <th scope="row">{{ $user->id }}</th>
+              <td><a href="/admin/users/{{$user->id}}" class="btn-link">{{ $user->username }}</a></td>
+              <td>{{ $user->email }}</td>
+              <td><a href="#" class="btn-link">{{ $user->instagram }}</a></td>
+          </tr>
+      @endforeach
     </tbody>
   </table>
- </div> 
- <nav aria-label="Page navigation example">
-   <ul class="pagination">
-     <li class="page-item">
-       <a class="page-link" href="#" aria-label="Previous">
-         <span aria-hidden="true">&laquo;</span>
-         <span class="sr-only">Previous</span>
-       </a>
-     </li>
-     <li class="page-item"><a class="page-link" href="#">1</a></li>
-     <li class="page-item"><a class="page-link" href="#">2</a></li>
-     <li class="page-item"><a class="page-link" href="#">3</a></li>
-     <li class="page-item">
-       <a class="page-link" href="#" aria-label="Next">
-         <span aria-hidden="true">&raquo;</span>
-         <span class="sr-only">Next</span>
-       </a>
-     </li>
-   </ul>
- </nav>
+ </div>
+ {{ $users->links() }}
 @endsection

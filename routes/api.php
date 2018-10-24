@@ -26,8 +26,8 @@ Route::group(['prefix' => 'auth'], function (){
     Route::patch('/changepass', 'AuthController@changePassword');
     //== authentication
     Route::post('/register', 'AuthController@register')->name('register');
-    Route::post('/login', 'AuthController@login')->name('login');
-    Route::get('/logout', 'AuthController@logout')->name('logout');
+    Route::post('/login', 'AuthController@login'); // email password password_confirmation
+    Route::get('/logout', 'AuthController@logout');
 });
 
 Route::group(['prefix' => 'designs'], function(){
