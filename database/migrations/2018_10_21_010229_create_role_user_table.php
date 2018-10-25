@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\User;
 
 class CreateRoleUserTable extends Migration
 {
@@ -23,6 +24,9 @@ class CreateRoleUserTable extends Migration
             $table->timestamps();
             $table->primary(['role_id', 'user_id']);
         });
+
+        $user = User::where("username", "mostafa")->first();
+        $user->roles()->attach(1);
     }
 
     /**

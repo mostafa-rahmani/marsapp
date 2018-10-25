@@ -22,7 +22,15 @@ class DesignPolicy
 
     public function modify(User $user, Design $design)
     {
-        return $user->owns($design);
+        if ($user->owns($design) && $user->blocked == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public function useApp(User $user)
+    {
+        return $user->blocked == 0;
     }
 
     public function download(User $user, Design $design)

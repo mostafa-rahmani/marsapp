@@ -78,7 +78,7 @@ class DesignsController extends Controller
         $image = $request->file('image');
         $data = $this->storeImage($image);
         $data['user_id'] = auth()->user()->id;
-        $data['title'] = $request->title;
+        $data['description'] = $request->description;
         $data['is_download_allowed'] = $request->is_download_allowed;
         $data['small_image'] = Storage::url( 'small_size_' . $data['image']);
         $design = Design::create($data);
@@ -110,7 +110,7 @@ class DesignsController extends Controller
     {
 
         $this->authorize('modify', $design);
-        $data = $request->only('image', 'is_download_allowed', 'title');
+        $data = $request->only('image', 'is_download_allowed', 'description');
         if ($request->hasfile('image')){
             $image = $request->file('image');
             // we delete the old image

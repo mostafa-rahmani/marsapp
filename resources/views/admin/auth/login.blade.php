@@ -6,7 +6,7 @@
        <div class="row mt-4">
            <div class="col-md-4"></div>
            <div class="col-md-4">
-               <form method="POST" action="/admin/login">
+               <form method="POST" action="/auth/login">
                    {{ csrf_field() }}
                    <div class="form-group">
                        <label for="login_email">ایمیل</label>

@@ -14,7 +14,7 @@ class DesignRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return $this->user()->can('modify');
     }
 
     /**
@@ -27,13 +27,13 @@ class DesignRequest extends FormRequest
         switch ($this->method()){
             case 'POST':
                 return [
-                    'title' => 'required|string',
+                    'description' => 'required|string',
                     'is_download_allowed' => 'boolean',
                     'image' => 'required|image'
                 ];
             case 'PATCH':
                 return [
-                    'title' => 'string',
+                    'description' => 'string',
                     'is_download_allowed' => 'boolean',
                     'image' => 'image'
                 ];

@@ -15,7 +15,7 @@
         <th scope="col">#ﺁیﺩی</th>
         <th scope="col">ﻧﺎﻡ کاﺭﺑﺮی</th>
         <th scope="col">ایﻡیﻝ </th>
-        <th scope="col">ایﻧﺴﺘﺎگﺭاﻡ</th>
+        <th scope="col">اینستاگرام</th>
       </tr>
     </thead>
     <tbody>

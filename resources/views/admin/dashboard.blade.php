@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('content')
+    @include('admin.layouts.flash')
     <div class="row">
         <div class="col-lg-6">
             <div class="bg-light mt-3 jumbotron p-3 w-100">

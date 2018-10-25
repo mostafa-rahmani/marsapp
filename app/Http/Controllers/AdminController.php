@@ -15,7 +15,7 @@ class AdminController extends Controller
     public function __construct()
     {
 
-        $this->middleware('auth')->except('home', 'adminLogin');
+        $this->middleware('auth')->except('home');
     }
 
     public function toggleManager(Request $request)
@@ -49,7 +49,8 @@ class AdminController extends Controller
         $users =  User::orderBy('created_at', 'desc')->take(5)->get();
         $users_count = User::all()->count();
         $designs_count = Design::all()->count();
-        return view('admin.dashboard', compact('users', 'designs_count', 'users_count'));
+        $current_user = auth()->user();
+        return view('admin.dashboard', compact('users', 'designs_count', 'users_count', 'current_user'));
     }
 
     public function home()
@@ -63,7 +64,6 @@ class AdminController extends Controller
                 'admin_register_on' => 1
             ];
         }
-
         return view('welcome' , compact('data'));
     }
 

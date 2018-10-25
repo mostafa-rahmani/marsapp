@@ -6,7 +6,14 @@
         <div class="row mt-4">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-                <form method="POST" action="/admin/password/change">
+                <form method="POST" action="/auth/password/change">
+                    @if($errors)
+                        <ul class="list-unstyled">
+                        @foreach($errors->all() as $error)
+                            <li class="alert alert-danger">{{$error}}</li>
+                        @endforeach
+                        </ul>
+                    @endif
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="login_password">رمز عبور</label>

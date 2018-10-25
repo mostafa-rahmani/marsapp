@@ -3,6 +3,6 @@
     <a class="nav-link" href="/admin">پیشخوان</a>
     <a class="nav-link" href="/admin/users">کاربران  </a>
     <a class="nav-link" href="/admin/settings">تنظیمات</a>
-    <a class="nav-link mr-auto d-inline-block" href="/admin/logout">خروج</a>
-    <a class="nav-link" href="/admin/password/reset">تغییر رمز عبور</a>
+    <a class="nav-link mr-auto d-inline-block" href="/auth/logout">خروج</a>
+    <a class="nav-link" href="/auth/password/change">تغییر رمز عبور</a>
 </nav>

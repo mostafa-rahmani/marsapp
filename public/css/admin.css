@@ -11736,6 +11736,11 @@ span {
   z-index: 100;
 }
 
+.svg-icon {
+  width: 100px;
+  height: 100px;
+}
+
 body,
 html {
   background-color: #eaeaea;

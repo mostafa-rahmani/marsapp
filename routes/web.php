@@ -14,13 +14,18 @@ Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
 
+Route::group(['prefix' => 'auth'], function (){
+    Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');
+    Route::post('/login', 'Admin\AuthController@adminLogin');
+    Route::get('/logout', 'Admin\AuthController@adminLogout');
+    Route::get('/password/change', 'Admin\AuthController@changePass');
+    Route::post('/password/change', 'Admin\AuthController@changePass');
+    Route::get('/register', 'Admin\AuthController@registerForm');
+    Route::post('/register', 'Admin\AuthController@register');
+});
+
 Route::group(['prefix'=> 'admin'], function(){
-	Route::get('/', 'AdminController@admin');
-	Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');
-	Route::post('/login', 'Admin\AuthController@adminLogin');
-	Route::get('/logout', 'Admin\AuthController@adminLogout');
-	Route::get('/password/change', 'Admin\AuthController@changePass');
-	Route::post('/password/change', 'Admin\AuthController@changePass');
+    Route::get('/', 'AdminController@admin');
 	Route::get('/settings', 'AdminController@adminSettings');
 	Route::post('/settings' , 'AdminController@updateSettings');
 	Route::get('/users', 'AdminController@allUsers');
