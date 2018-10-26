@@ -6,6 +6,10 @@ use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 
+/**
+ * @property mixed is_download_allowed
+ * @property mixed blocked
+ */
 class Design extends Model
 {
     use Searchable;

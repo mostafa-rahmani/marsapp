@@ -32,6 +32,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('admin-register', function () {
             return Setting::first()->admin_register_on;
         });
-
     }
 }

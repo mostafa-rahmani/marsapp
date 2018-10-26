@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Design;
-use Illuminate\Pagination\Paginator;
 use App\Http\Requests\DesignRequest;
-use Illuminate\Auth\Access\Gate;
+use Illuminate\Support\Facades\Gate;
 use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +16,7 @@ class DesignsController extends Controller
     protected $full_size_prefix;
     protected $small_size_path;
     protected $small_size_prefix;
-    protected $thumbail_width;
+    protected $thumbnail_width;
 
 
     public function __construct()
@@ -27,66 +26,73 @@ class DesignsController extends Controller
         $this->small_size_path = 'public'; // storage path
         $this->full_size_prefix = 'full_size_';
         $this->small_size_prefix = 'small_size_';
-        $this->thumbail_width = 560;
+        $this->thumbnail_width = 560;
     }
 
 
     public function index()
     {
-        $designs = Design::paginate(20);
+        $designs = Design::where('blocked', '0')->paginate(20);
         foreach ($designs as $design){
             $this->DesignOBJ($design);
         }
         return $designs;
+
     }
 
 
-    public function show(Request $request)
+    public function show(Design $design)
     {
-        $design = Design::findOrFail($request->design)->first();
-        $design = $this->DesignOBJ($design);
-        $response = [
-            'base_url' => url()->to('/'),
-            'design' => $design
-        ];
-        return response()->json($response, 200);
+        if (Gate::allows('showDesign', $design)){ // checking blocked design
+            $design = $this->DesignOBJ($design);
+            $response = [
+                'base_url' => url()->to('/'),
+                'design' => $design
+            ];
+            return response()->json($response, 200);
+        }
+        return response()->json(['message' => 'either design or user is blocked'], 200);
     }
-
 
     /**
      * downloads the full size image
      */
     public function download(Request $request, Design $design)
     {
-        if ($request->user()->can('download', $design)){
+        if (Gate::allows('download', $design)){
             $image = $design->image;
             $request->user()->downloads()->detach($design->id);
             $request->user()->downloads()->attach($design->id);
             $path = storage_path('app/' . $this->full_size_path) . "/" . $this->full_size_prefix . $image;
             return Response::download($path);
         } else {
-            return response()->json(['message', 'this design is not allowed to be downloaded'], 401);
+            return response()->json(['message', 'this design is not allowed to be downloaded'], 403);
         }
     }
 
 
     /**
      * creates a new design post
-     * */
+     * @param DesignRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(DesignRequest $request)
     {
-        $image = $request->file('image');
-        $data = $this->storeImage($image);
-        $data['user_id'] = auth()->user()->id;
-        $data['description'] = $request->description;
-        $data['is_download_allowed'] = $request->is_download_allowed;
-        $data['small_image'] = Storage::url( 'small_size_' . $data['image']);
-        $design = Design::create($data);
-        $response = [
-            'message' => 'design successfully created',
-            'design' => $this->DesignOBJ($design)
-        ];
-        return response()->json($response, 201);
+        if (Gate::allows('storeDesign')){
+            $image = $request->file('image');
+            $data = $this->storeImage($image);
+            $data['user_id'] = auth()->user()->id;
+            $data['description'] = $request->description;
+            $data['is_download_allowed'] = $request->is_download_allowed;
+            $data['small_image'] = Storage::url( 'small_size_' . $data['image']);
+            $design = Design::create($data);
+            $response = [
+                'message' => 'design successfully created',
+                'design' => $this->DesignOBJ($design)
+            ];
+            return response()->json($response, 201);
+        }
+        return response()->json(['message' => 'user is blocked. can not create new design '], 403);
     }
 
 
@@ -95,11 +101,14 @@ class DesignsController extends Controller
      * */
     public function delete(Design $design)
     {
-        $this->authorize('modify', $design);
-        $image = $design->image;
-        $this->deleteImage($design->image);
-        $result = $design->delete();
-        return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
+        if (auth()->user()->can('deleteDesign', $design)){
+            $this->authorize('modify', $design);
+            $image = $design->image;
+            $this->deleteImage($design->image);
+            $result = $design->delete();
+            return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
+        }
+        return response()->json(['message' => 'this design does not belong to you'], 401);
     }
 
 
@@ -163,8 +172,8 @@ class DesignsController extends Controller
         $image = Image::make($image->getRealPath());
         $data['original_width']  =  $image->width();
         $data['original_height'] = $image->height();
-        if ($data['original_width'] > $this->thumbail_width){
-            $image->widen($this->thumbail_width, function ($constraint) {
+        if ($data['original_width'] > $this->thumbnail_width){
+            $image->widen($this->thumbnail_width, function ($constraint) {
                 $constraint->upsize();
             });
             $image->save(storage_path('app/' . $this->small_size_path . '/' . $this->small_size_prefix . $filename));

@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Design;
 use App\User;
+use http\Env\Request;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class DesignPolicy
@@ -28,13 +29,24 @@ class DesignPolicy
         return false;
     }
 
-    public function useApp(User $user)
+    public function showDesign(User $user, Design $design)
+    {
+        //checking if this design is blocked by manager
+        return $design->blocked == 0;
+    }
+
+    public function storeDesign(User $user)
     {
         return $user->blocked == 0;
     }
 
+    public function deleteDesign(User $user, Design $design)
+    {
+        return $user->owns($design);
+    }
+
     public function download(User $user, Design $design)
     {
-        return $design->is_download_allowed;
+        return $design->is_download_allowed && $design->blocked == 0;
     }
 }

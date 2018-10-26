@@ -14,7 +14,7 @@ class DesignRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->can('modify');
+        return true;
     }
 
     /**
