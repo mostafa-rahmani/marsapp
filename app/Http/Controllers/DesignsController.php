@@ -78,10 +78,11 @@ class DesignsController extends Controller
      */
     public function store(DesignRequest $request)
     {
-        if (Gate::allows('storeDesign')){
+        $user = auth()->user();
+        if ($user->isBlocked()){
             $image = $request->file('image');
             $data = $this->storeImage($image);
-            $data['user_id'] = auth()->user()->id;
+            $data['user_id'] = $user->id;
             $data['description'] = $request->description;
             $data['is_download_allowed'] = $request->is_download_allowed;
             $data['small_image'] = Storage::url( 'small_size_' . $data['image']);
@@ -180,6 +181,7 @@ class DesignsController extends Controller
         }else{
             $image->save(storage_path('app/' . $this->small_size_path . '/' .$this->small_size_prefix . $filename));
         }
+
         $data['image'] = $filename;
         return $data;
     }
@@ -200,8 +202,8 @@ class DesignsController extends Controller
 
 
     protected function DesignOBJ($design){
-        $design->comments = $design->comments()->get();
-        $design->user = $design->user()->get();
+        $design->comments = $design->comments()->with('user')->get();
+        $design->user = $design->user()->first();
         $design->small_image =  url()->to("\\") . trim(Storage::url( $this->small_size_prefix . $design->image), '/') ;
         $design->donload_count = $design->download_users()->count();
         $design->donload_users = $design->download_users()->get();

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Scout\Searchable;
 use Laravel\Passport\HasApiTokens;
 use App\Role;
+use App\User;
 
 class User extends Authenticatable
 {
@@ -94,5 +95,9 @@ class User extends Authenticatable
     public function isManager()
     {
         return $this->roles()->find(1) ? true : false;
+    }
+    public function isBlocked(){
+
+        return $this->blocked == "0";   
     }
 }

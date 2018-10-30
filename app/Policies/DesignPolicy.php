@@ -36,8 +36,8 @@ class DesignPolicy
     }
 
     public function storeDesign(User $user)
-    {
-        return $user->blocked == 0;
+    { 
+        return $user->isBlocked() ;
     }
 
     public function deleteDesign(User $user, Design $design)

@@ -153,7 +153,8 @@ class UsersController extends Controller
         $user->followers = $user->followers()->get();
         $user->likesCount = $user->likedDesigns()->count();
         $user->liked_designs = $user->likedDesigns()->get();
-
+        $seenComments = $user->comments()->get()->where('seen', 1);
+        $user->seenComments = $seenComments;
         $download_count = 0;
         foreach ($user->designs()->get() as $design){
             $download_count = $download_count + $design->download_users()->count();

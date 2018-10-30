@@ -22,13 +22,15 @@ class CommentsController extends Controller
     {
         if (request()->user()->can('modify', $comment)) {
             $this->validate($request, [
-                'content' => 'required|String'
+                'content' => 'String',
+                'seen' => 'Boolean',
             ]);
-            $comment->content = $request->input('content');
-            if ($comment->save()) {
+
+            if ($comment->update($request->only('content', 'seen'))) {
                 $response = [
-                    'message' => 'something went wrong',
-                    'comment' => $comment->with('user', 'design')->get()
+                    'message' => 'comment was updated successfully ',
+                    'comment' => $comment,
+                    'user' => $comment->user()->get()
                 ];
                 return response()->json($response, 200);
             }
@@ -61,7 +63,8 @@ class CommentsController extends Controller
         if ($comment->save()){
             $response = [
                 'message' => 'comment was successfully created',
-                'comment' => $comment->with('user', 'design')->get()
+                'comment' => $comment,
+                'user' => $comment->user()->get()
             ];
             return response()->json($response, 200);
         }

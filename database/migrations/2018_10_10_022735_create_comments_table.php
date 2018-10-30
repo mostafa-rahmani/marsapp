@@ -16,6 +16,7 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('content');
+            $table->boolean('seen')->default("0");
             $table->timestamps();
 
             $table->integer('user_id')->unsigned();
@@ -24,14 +25,13 @@ class CreateCommentsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
+            
             $table->integer('design_id')->unsigned();
             $table->foreign('design_id')
                 ->references('id')
                 ->on('designs')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
 
         });
     }
