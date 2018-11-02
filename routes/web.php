@@ -10,11 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/sendmail', function (){
-    $user = \App\User::firstOrFail();
-    \Mail::to($user)->send(new \App\Mail\resetPassword('some.com', 'milad', 'mostafa@gmail.com'));
-    return redirect('/');
-});
 Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
