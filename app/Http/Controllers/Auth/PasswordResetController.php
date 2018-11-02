@@ -7,8 +7,9 @@ use Carbon\Carbon;
 use App\Notifications\PasswordResetRequest;
 use App\Notifications\PasswordResetSuccess;
 use App\User;
+use App\Setting;
 use App\PasswordReset;
-
+use Illuminate\Support\Facades\Mail;
 class PasswordResetController extends Controller
 {
 
@@ -35,13 +36,13 @@ class PasswordResetController extends Controller
                 'token' => str_random(60)
             ]
         );
-        if ($user && $passwordReset)
-            $user->notify(
-                new PasswordResetRequest($passwordReset->token, $user->username)
-            );
-        return response()->json([
-            'message' => 'We have e-mailed your password reset link!'
-        ]);
+        if ($user && $passwordReset){
+            $url = url('/find/'. $passwordReset->token);
+            Mail::to($user)->send(new \App\Mail\resetPassword($url));
+            return response()->json([
+                'message' => 'We have e-mailed your password reset link!'
+            ], 201);
+        }
     }
 
 
@@ -86,7 +87,7 @@ class PasswordResetController extends Controller
     {
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string|confirmed',
+            'password' => 'required|string|confirmed|min:8',
             'token' => 'required|string'
         ]);
         $passwordReset = PasswordReset::where([
@@ -110,7 +111,6 @@ class PasswordResetController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
         $passwordReset->delete();
-        $user->notify(new PasswordResetSuccess($passwordReset));
         return $user;
     }
 
@@ -119,10 +119,20 @@ class PasswordResetController extends Controller
         $user = $this->reset($request);
         return response()->json($user, 201);
     }
+
     public function resetWeb(Request $request)
     {
         $user = $this->reset($request);
         session()->flash('changed_pass_msg' , "رمز عبور شما با موفقیت تغییر کرد");
-        return view('welcome');
+        $data = Setting::first();
+        if (!isset($data)){
+            $data = [
+                'landing_title' => 'اپلیکیشن پرتقال برای تمام طراحان',
+                'landing_description' => 'طراح هستید یا نقاش و شاید هنرمند، اپ پرتقال رو نصب کنید و ایده ها و طرح هاتون رو با هم به اشتراک بزارید و بازخورد دوستاتون رو هم داشته باشید.',
+                'app_download_url' => 'cafebazaar.ir',
+                'admin_register_on' => 1
+            ];
+        }
+        return view('welcome' , compact('data'));
     }
 }
