@@ -55,10 +55,10 @@ class AdminController extends Controller
 
     public function home()
     {
-        $data = Setting::first();
+//        $data = Setting::first();
         if (!isset($data)){
             $data = [
-                'landing_title' => 'اپلیکیشن پرتقال برای تمام طراحان',
+                'landing_title' => ' اپلیکیشن پرتقال برای تمام طراحان است',
                 'landing_description' => 'طراح هستید یا نقاش و شاید هنرمند، اپ پرتقال رو نصب کنید و ایده ها و طرح هاتون رو با هم به اشتراک بزارید و بازخورد دوستاتون رو هم داشته باشید.',
                 'app_download_url' => 'cafebazaar.ir',
                 'admin_register_on' => 1
