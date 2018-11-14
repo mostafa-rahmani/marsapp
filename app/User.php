@@ -10,6 +10,9 @@ use Laravel\Passport\HasApiTokens;
 use App\Role;
 use App\User;
 
+/**
+ * @property int likesCount
+ */
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens, Searchable;
@@ -98,6 +101,6 @@ class User extends Authenticatable
     }
     public function isBlocked(){
 
-        return $this->blocked == "0";   
+        return $this->blocked == "0";
     }
 }

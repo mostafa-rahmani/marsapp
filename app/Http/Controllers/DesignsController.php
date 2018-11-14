@@ -5,28 +5,16 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\Http\Requests\DesignRequest;
 use Illuminate\Support\Facades\Gate;
-use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
 class DesignsController extends Controller
 {
-    protected $full_size_path;
-    protected $full_size_prefix;
-    protected $small_size_path;
-    protected $small_size_prefix;
-    protected $thumbnail_width;
-
-
     public function __construct()
     {
         $this->middleware('auth:api');
-        $this->full_size_path = 'full_size'; // storage path
-        $this->small_size_path = 'public'; // storage path
-        $this->full_size_prefix = 'full_size_';
-        $this->small_size_prefix = 'small_size_';
-        $this->thumbnail_width = 560;
+
     }
 
 
@@ -143,10 +131,20 @@ class DesignsController extends Controller
     /**
      * list of other users designs that logged in user is following theme
      * */
-    public function followingDesigns(Request $request){
+    public function followingDesigns(){
+        $user = auth()->user();
+        $followings = $user->following;
+        $designs = [];
+        foreach ($followings as $user) {
+            if ($user->design){
+                array_push($designs, $this->designOBJ($user->design, false, true));
+            }
+        }
 
-        $response = $request->user()->following()->with('designs')->get();
-        return response()->json($response, 200);
+       if ($designs){
+           return response()->json($this->paginateAnswers($designs, $this->per_page), 200);
+       }
+       return response()->json($designs, 200);
     }
 
     public function list(Request $request)
@@ -156,59 +154,8 @@ class DesignsController extends Controller
         ]);
         $designs = Design::findMany($request->input('ids'));
         foreach ($designs as $design){
-            $this->DesignOBJ($design);
+            $this->DesignOBJ($design, true);
         }
         return response()->json($designs, 201);
-    }
-
-    /**
-     * stores full size image and small size
-     * @param image
-     */
-    protected function storeImage($image){
-        $extension = $image->getClientOriginalExtension();
-        // give it a name // we cant use image name maybe it contains sql
-        $filename = date('Y-m-d_h-m-s') . '_' . str_random('4') . '.' . $extension;
-        $image->storeAs( $this->full_size_path,  $this->full_size_prefix . $filename);
-        $image = Image::make($image->getRealPath());
-        $data['original_width']  =  $image->width();
-        $data['original_height'] = $image->height();
-        if ($data['original_width'] > $this->thumbnail_width){
-            $image->widen($this->thumbnail_width, function ($constraint) {
-                $constraint->upsize();
-            });
-            $image->save(storage_path('app/' . $this->small_size_path . '/' . $this->small_size_prefix . $filename));
-        }else{
-            $image->save(storage_path('app/' . $this->small_size_path . '/' .$this->small_size_prefix . $filename));
-        }
-
-        $data['image'] = $filename;
-        return $data;
-    }
-
-
-    protected function deleteImage($imageName){
-        $full_image = Storage::disk('local')->exists($this->full_size_path . '/' . $this->full_size_prefix . $imageName);
-        $small_image = Storage::disk('local')->exists($this->small_size_path . '/' . $this->small_size_prefix . $imageName);
-        if ($small_image && $full_image){
-            return Storage::delete([
-                $this->full_size_path . '/' . $this->full_size_prefix . $imageName,
-                $this->small_size_path . '/' . $this->small_size_prefix . $imageName
-            ]);
-        }
-        // file does exist
-        return false;
-    }
-
-
-    protected function DesignOBJ($design){
-        $design->comments = $design->comments()->with('user')->get();
-        $design->user = $design->user()->first();
-        $design->small_image =  url()->to("\\") . trim(Storage::url( $this->small_size_prefix . $design->image), '/') ;
-        $design->donload_count = $design->download_users()->count();
-        $design->donload_users = $design->download_users()->get();
-        $design->likes = $design->likes()->get();
-        $design->like_count = $design->likes()->count();
-        return $design;
     }
 }

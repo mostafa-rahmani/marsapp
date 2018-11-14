@@ -11,19 +11,9 @@ use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
-    protected $profile_image_prefix;
-    protected $bg_image_prefix;
-    protected $profile_image_width;
-    protected $profile_bg_width;
-    protected $user_image_folder;
     public function __construct()
     {
         $this->middleware('auth:api');
-        $this->user_image_folder    = 'public';
-        $this->bg_image_prefix       = 'profile_bg_';
-        $this->profile_image_prefix       = 'profile_image_';
-        $this->profile_image_width = 100;
-        $this->profile_bg_width        = 900;
     }
 
     public function index()
@@ -37,7 +27,7 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        $this->userOBJ($user);
+        parent::userOBJ($user);
         return response()->json($user, 201);
     }
 
@@ -88,7 +78,7 @@ class UsersController extends Controller
             }
         }
         $user->update($data);
-        return $this->userOBJ($user);
+        return parent::userOBJ($user);
     }
 
     /**
@@ -140,41 +130,18 @@ class UsersController extends Controller
         return response()->json($response, 200);
     }
 
-
-    protected function userOBJ($user){
-        if (isset($user->profile_image)){
-            $user->profile_image = url()->to("\\") . trim(Storage::url($this->user_image_folder . '/' . $user->profile_image), '/');
-        }
-        if (isset($user->profile_background)){
-            $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
-        }
-        $user->designs = $user->designs()->get();
-        $user->followigns = $user->following()->get();
-        $user->followers = $user->followers()->get();
-        $user->likesCount = $user->likedDesigns()->count();
-        $user->liked_designs = $user->likedDesigns()->get();
-        $seenComments = $user->comments()->get()->where('seen', 1);
-        $user->seenComments = $seenComments;
-        $download_count = 0;
-        foreach ($user->designs()->get() as $design){
-            $download_count = $download_count + $design->download_users()->count();
-        }
-        $user->download_count = $download_count;
-        return $user;
-    }
-
-    protected function storeImage($filename, $image, $width){
-        $image = Image::make($image->getRealPath());
-        $image->widen($width, function ($constraint) {
-            $constraint->upsize();
-        });
-        return $image->save(storage_path('app/' . $this->user_image_folder . '/' . $filename)) ? true : false;
-    }
-
-    protected function deleteFile($filename){
-        $image = Storage::disk('local')->exists($this->user_image_folder . '/' . $filename);
-        if ($image){
-            return Storage::delete($this->user_image_folder . '/' . $filename);
-        }
-    }
+//    protected function storeImage($filename, $image, $width){
+//        $image = Image::make($image->getRealPath());
+//        $image->widen($width, function ($constraint) {
+//            $constraint->upsize();
+//        });
+//        return $image->save(storage_path('app/' . $this->user_image_folder . '/' . $filename)) ? true : false;
+//    }
+//
+//    protected function deleteFile($filename){
+//        $image = Storage::disk('local')->exists($this->user_image_folder . '/' . $filename);
+//        if ($image){
+//            return Storage::delete($this->user_image_folder . '/' . $filename);
+//        }
+//    }
 }

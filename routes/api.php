@@ -39,7 +39,7 @@ Route::group(['prefix' => 'designs'], function(){
     Route::post('/list', 'DesignsController@list');
     Route::post('/create', 'DesignsController@store');
     Route::post('/{design}/update', 'DesignsController@update');
-    Route::get('/{user}/followingdesigns', 'DesignsController@followingDesigns');
+    Route::get('/following/get', 'DesignsController@followingDesigns');
 
 });
 

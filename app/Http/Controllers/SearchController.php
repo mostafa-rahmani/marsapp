@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Input;
 class SearchController extends Controller
 {
 
@@ -48,43 +46,5 @@ class SearchController extends Controller
     }
 
 
-    /**
-     * Paginate answers.
-     *
-     * @param array $answers
-     *
-     * @return LengthAwarePaginator
-     */
-    protected function paginateAnswers(array $answers, $perPage = 10)
-    {
-        $page = Input::get('page', 1);
 
-        $offset = ($page * $perPage) - $perPage;
-
-        $paginator = new LengthAwarePaginator(
-            $this->transformAnswers($answers, $offset, $perPage),
-            count($answers),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-
-        return $paginator;
-    }
-
-    /**
-     * Transform answers.
-     *
-     * @param array $answers
-     * @param int $offset
-     * @param int $perPage
-     *
-     * @return array
-     */
-    private function transformAnswers($answers, $offset, $perPage)
-    {
-        $answers = array_slice($answers, $offset, $perPage, true);
-
-        return $answers;
-    }
 }

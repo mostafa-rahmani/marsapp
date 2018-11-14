@@ -15,7 +15,7 @@ class CommentsController extends Controller
 
     public function show(Comment $comment)
     {
-        return $comment->with('user', 'design')->get();
+        return $this->commentOBJ($comment);
     }
 
     public function update(Request $request, Comment $comment)
@@ -29,8 +29,7 @@ class CommentsController extends Controller
             if ($comment->update($request->only('content', 'seen'))) {
                 $response = [
                     'message' => 'comment was updated successfully ',
-                    'comment' => $comment,
-                    'user' => $comment->user()->get()
+                    'comment' => $this->commentOBJ($comment)
                 ];
                 return response()->json($response, 200);
             }
@@ -63,8 +62,7 @@ class CommentsController extends Controller
         if ($comment->save()){
             $response = [
                 'message' => 'comment was successfully created',
-                'comment' => $comment,
-                'user' => $comment->user()->get()
+                'comment' => $this->commentOBJ($comment)
             ];
             return response()->json($response, 200);
         }
