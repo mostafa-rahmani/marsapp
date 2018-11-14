@@ -55,7 +55,7 @@ class AdminController extends Controller
 
     public function home()
     {
-//        $data = Setting::first();
+        $data = Setting::first();
         if (!isset($data)){
             $data = [
                 'landing_title' => ' اپلیکیشن پرتقال برای تمام طراحان است',
