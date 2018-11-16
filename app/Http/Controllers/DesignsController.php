@@ -73,7 +73,7 @@ class DesignsController extends Controller
             $data['user_id'] = $user->id;
             $data['description'] = $request->description;
             $data['is_download_allowed'] = $request->is_download_allowed;
-            $data['small_image'] = Storage::url( 'small_size_' . $data['image']);
+            $data['small_image'] = $this->imageUrl($data['image']);
             $design = Design::create($data);
             $response = [
                 'message' => 'design successfully created',
@@ -87,17 +87,20 @@ class DesignsController extends Controller
 
     /**
      * delete logged in user's design post
-     * */
+     * @param Request $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete(Design $design)
     {
-        if (auth()->user()->can('deleteDesign', $design)){
-            $this->authorize('modify', $design);
-            $image = $design->image;
-            $this->deleteImage($design->image);
-            $result = $design->delete();
-            return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
-        }
-        return response()->json(['message' => 'this design does not belong to you'], 401);
+            if (Gate::allows('deleteDesign', $design)){
+                $image = $design->image;
+                $this->deleteImage($design->image);
+                $result = $design->delete();
+                return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
+            }
+            return response()->json(['message' => 'this design does not belong to you', 'des' => $request], 403);
+
+//        return response()->json(['message' => 'design not found. please try deleting some other'], 404);
     }
 
 
@@ -107,23 +110,25 @@ class DesignsController extends Controller
     public function update(Request $request, Design $design)
     {
 
-        $this->authorize('modify', $design);
-        $data = $request->only('image', 'is_download_allowed', 'description');
-        if ($request->hasfile('image')){
-            $image = $request->file('image');
-            // we delete the old image
-            if ($this->deleteImage($design->image)){
-                $data = $this->storeImage($image);
-            }else{
-                return response()->json(['message' => 'updating process was fail. try again'], 404);
+        if (Gate::allows('modify', $design)){
+            $data = $request->only('image', 'is_download_allowed', 'description');
+            if ($request->hasfile('image')){
+                $image = $request->file('image');
+                // we delete the old image
+                if ($this->deleteImage($design->image)){
+                    $data = $this->storeImage($image);
+                }else{
+                    return response()->json(['message' => 'updating process was fail. try again'], 404);
+                }
             }
-        }
-        $design->update($data);
+            $design->update($data);
 
-        $response = [
-            'message' => 'design successfully created',
-            'design' => $this->DesignOBJ($design)
-        ];
+            $response = [
+                'message' => 'design successfully created',
+                'design' => $this->DesignOBJ($design)
+            ];
+            return response()->json($response, 200);
+        }
         return response()->json($response, 200);
     }
 

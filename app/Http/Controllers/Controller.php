@@ -12,6 +12,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Input;
+use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\ImageManagerStatic;
 
 class Controller extends BaseController
 {
@@ -79,6 +82,12 @@ class Controller extends BaseController
         return $user;
     }
 
+    /**
+     * @param Design $design
+     * @param bool $withUser
+     * @param bool $withComments
+     * @return proper Design OBJECT
+     */
     protected function designOBJ(Design $design, $withUser = true, $withComments = true){
 
         if ($withComments){
@@ -98,6 +107,12 @@ class Controller extends BaseController
         return $design;
     }
 
+    /**
+     * @param Comment $comment
+     * @param bool $withUser
+     * @param bool $withDesign
+     * @return Comment OBJECT with complete needed properties
+     */
     protected function commentOBJ(Comment $comment, $withUser = true, $withDesign = true){
         if ($withUser ){
             $comment->user = $this->userOBJ($comment->user, false);
@@ -108,6 +123,11 @@ class Controller extends BaseController
         return $comment;
     }
 
+    /**
+     * @param $imageName
+     * @return bool true if deletion was successful
+     * @return bool false if there is no existing file
+     */
     protected function deleteImage($imageName){
         $full_image = Storage::disk('local')->exists($this->full_size_path . '/' . $this->full_size_prefix . $imageName);
         $small_image = Storage::disk('local')->exists($this->small_size_path . '/' . $this->small_size_prefix . $imageName);
@@ -131,10 +151,10 @@ class Controller extends BaseController
         $filename = date('Y-m-d_h-m-s') . '_' . str_random('4') . '.' . $extension;
         $image->storeAs( $this->full_size_path,  $this->full_size_prefix . $filename);
         $image = Image::make($image->getRealPath());
-        $data['original_width']  =  $image->width();
-        $data['original_height'] = $image->height();
+        $data['original_width']  =  $image->getWidth();
+        $data['original_height'] = $image->getHeight();
         if ($data['original_width'] > $this->thumbnail_width){
-            $image->widen($this->thumbnail_width, function ($constraint) {
+            $image->resize($this->thumbnail_width,  function ($constraint) {
                 $constraint->upsize();
             });
             $image->save(storage_path('app/' . $this->small_size_path . '/' . $this->small_size_prefix . $filename));
@@ -144,6 +164,36 @@ class Controller extends BaseController
 
         $data['image'] = $filename;
         return $data;
+    }
+
+    /**
+     * @param string $image
+     * @param string $size
+     * @return bool|string
+     */
+    protected function imagePath(string $image, $size = 'small'){
+        if ($size === 'full'){// full size
+            $path = storage_path($this->full_size_path . $image);
+            return file_exists($path) ? $path : false;
+        }
+        // small size
+        return file_exists(public_path($image)) ? public_path($image) : false;
+    }
+
+    /**
+     * @param string $image
+     * @param string $size
+     * @return string url of the given image
+     * @return bool false if there is no existing file
+     */
+    protected function imageUrl(string $image, $size = 'small'){
+        if ($size === 'full'){
+            return $this->imagePath($image, 'full') ?
+                Storage::url( $this->full_size_path . '/' . $this->full_size_prefix . $image) : false;
+        }
+        // small size
+        return $this->imagePath($image) ?
+            Storage::url($this->small_size_path . '/' . $this->small_size_prefix ) : false ;
     }
 
     /**

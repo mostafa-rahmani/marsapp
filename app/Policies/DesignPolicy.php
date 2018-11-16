@@ -23,7 +23,7 @@ class DesignPolicy
 
     public function modify(User $user, Design $design)
     {
-        if ($user->owns($design) && $user->blocked == 0){
+        if ($user->owns($design)){
             return true;
         }
         return false;
@@ -36,7 +36,7 @@ class DesignPolicy
     }
 
     public function storeDesign(User $user)
-    { 
+    {
         return $user->isBlocked() ;
     }
 
