@@ -87,7 +87,7 @@ class User extends Authenticatable
 
     public function owns(Design $design)
     {
-        return $this->id == $design->user_id;
+        return $this->id === $design->user()->id;
     }
 
     public function roles()
