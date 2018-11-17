@@ -56,13 +56,16 @@ class DesignsController extends Controller
      */
     public function download(Request $request, Design $design)
     {
+
         if (Gate::allows('download', $design)){
             $image = $design->image;
-            $request->user()->downloads()->detach($design->id);
-            $request->user()->downloads()->attach($design->id);
             $path = $this->imagePath($image, 'full');
-            return $path ? Response::download($path) :
-                response()->json(['message' => 'cant find the file to download. please try later'], 404);
+            if($path){
+                $request->user()->downloads()->detach($design->id);
+                $request->user()->downloads()->attach($design->id);
+                return Response::download($path);
+            }
+                return response()->json(['message' => 'cant find the file to download. please try later'], 404);
 
         } else {
             return response()->json(['message' => 'this design is not allowed to be downloaded'], 403);
@@ -119,16 +122,15 @@ class DesignsController extends Controller
      * */
     public function update(Request $request, Design $design)
     {
-
         if (Gate::allows('modify', $design)){
             $data = $request->only('image', 'is_download_allowed', 'description');
             if ($request->hasfile('image')){
                 $image = $request->file('image');
                 // we delete the old image
-                if ($this->deleteImage($design->image)){
+                if ($result = $this->deleteImage($design->image)){
                     $data = $this->storeImage($image);
                 }else{
-                    return response()->json(['message' => 'updating process was fail. try again'], 404);
+                    return response()->json(['message' => 'updating process was fail. try again', 'result' => $result], 404);
                 }
             }
             $design->update($data);

@@ -136,13 +136,15 @@ class Controller extends BaseController
     protected function deleteImage($imageName , $profile = false){
         if ($profile &&
             file_exists(storage_path('app/' . $this->user_image_folder .  '/' . $imageName))){
-            Storage::delete( $this->user_image_folder . '/'  . $imageName);
+            $profile = Storage::delete( $this->user_image_folder . '/'  . $imageName);
+            return $profile ? true : false;
         }
         if (file_exists(storage_path('app/' . $this->sm_folder . '/' . $this->sm_prefix . $imageName))){
-            Storage::delete( $this->lg_folder . '/' . $this->lg_prefix . $imageName);
+            $sm = Storage::delete( $this->sm_folder . '/' . $this->sm_prefix . $imageName);
         }
         if (file_exists(storage_path('app/' . $this->lg_folder . '/' . $this->lg_prefix . $imageName))){
-            Storage::delete( $this->sm_folder . '/' . $this->sm_prefix . $imageName);
+            $lg = Storage::delete( $this->lg_folder . '/' . $this->lg_prefix . $imageName);
+            return isset($sm) && $sm && $lg ?  true : false;
         }
     }
 
@@ -202,19 +204,19 @@ class Controller extends BaseController
      */
     protected function imagePath(string $image, $type = 'small'){
         if ($type === 'full'){// full size
-            $path = storage_path( $this->lg_folder . '/' . $this->lg_prefix . $image);
+            $path = storage_path( 'app/' . $this->lg_folder . '/' . $this->lg_prefix . $image);
             return file_exists($path) ? $path : false;
         }
         if ($type === 'profile_background'){
-            $path = storage_path( $this->sm_folder . '/' . $this->bg_image_prefix . $image);
+            $path = storage_path( 'app/' . $this->sm_folder . '/' . $this->bg_image_prefix . $image);
             return file_exists($path) ? $path : false;
         }
         if ($type === 'profile_image'){
-            $path = storage_path( $this->sm_folder . '/' . $this->profile_image_prefix . $image);
+            $path = storage_path( 'app/' . $this->sm_folder . '/' . $this->profile_image_prefix . $image);
             return file_exists($path) ? $path : false;
         }
         // small size1
-        $path = storage_path($this->sm_folder . '/' . $this->sm_prefix . $image);
+        $path = storage_path( 'app/' . $this->sm_folder . '/' . $this->sm_prefix . $image);
         return file_exists($path) ? $path : false;
     }
 

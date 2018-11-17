@@ -23,10 +23,7 @@ class DesignPolicy
 
     public function modify(User $user, Design $design)
     {
-        if ($user->owns($design)){
-            return true;
-        }
-        return false;
+        return $user->id == $design->user_id;
     }
 
     public function showDesign(User $user, Design $design)
