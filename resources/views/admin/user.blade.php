@@ -12,17 +12,17 @@
      	<span class="m-1"> follwoing:  {{ $user->following()->count() }}</span>
      	<span class="m-1"> followers: {{ $user->followers()->count() }}</span>
      	@if($user->instagram)
-             <span class="m-1">instagram: <a href="www.instagram.com/{{$user->instagram}}">{{ $user->instagram }}</a></span>
+             <a href="{{$user->instagram}}"><span class="m-1">instagram</span></a>
          @endif
      </span>
    </div>
    <hr class="my-4">
    <p class="mb-5">{{ $user->bio }}</p>
    <div class="row my-4">
-   @foreach($designs as $design)
+   @foreach($user->designs as $design)
        <div class="col-lg-4 justify-content-center">
            <div class="card my-3">
-               <img class="card-img-top" src="{{ url()->to('/') . '/' . $design->small_image }}" alt="Card image cap">
+               <img class="card-img-top" src="{{ $design->small_image }}" alt="Card image cap">
                <div class="card-body">
                    <p class="card-text">{{ $design->title }}</p>
                    @if($design->blocked)

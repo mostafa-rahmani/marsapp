@@ -11,11 +11,35 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    public $lg_folder;
+    public $lg_prefix;
+    public $sm_folder;
+    public $sm_prefix;
+    public $thumbnail_width;
+
+    public $profile_image_prefix;
+    public $bg_image_prefix;
+    public $profile_image_width;
+    public $profile_bg_width;
+    public $user_image_folder;
+    public $per_page;
 
     public function __construct()
     {
 
         $this->middleware('auth')->except('home');
+        $this->lg_folder = 'full_size'; // storage path
+        $this->sm_folder = 'public'; // storage path
+        $this->lg_prefix = 'lg_';
+        $this->sm_prefix = 'sm_';
+        $this->thumbnail_width = 960;
+        //users
+        $this->user_image_folder     = 'public';
+        $this->bg_image_prefix       = 'profile_bg_';
+        $this->profile_image_prefix  = 'profile_image_';
+        $this->profile_image_width   = 100;
+        $this->profile_bg_width      = 900;
+        $this->per_page = 20;
     }
 
     public function toggleManager(Request $request)
@@ -75,8 +99,8 @@ class AdminController extends Controller
 
     public function showUser(User $user)
     {
-    	$designs = $user->designs()->get();
-    	return view('admin.user', compact('user', 'designs'));
+    	$user = parent::userOBJ($user);
+    	return view('admin.user', compact('user'));
     }
 
     public function adminSettings()

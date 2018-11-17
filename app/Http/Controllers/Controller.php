@@ -106,7 +106,7 @@ class Controller extends BaseController
         $user = $design->user()->first();
         $design->user = $this->userInfo($user, false );
 
-        $design->small_image =  url()->to("\\") . trim(Storage::url( $this->sm_folder . '/' . $this->sm_prefix . $design->image), '/') ;
+        $design->small_image =  url()->to("\\") . Storage::url( $this->sm_folder . '/' . $this->sm_prefix . $design->image);
         $design->donload_count = $design->download_users()->count();
         $design->donload_users = $design->download_users()->get();
         $design->likes = $design->likes()->get();
