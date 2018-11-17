@@ -42,7 +42,7 @@ class DesignPolicy
 
     public function deleteDesign(User $user, Design $design)
     {
-        return $user->owns($design);
+        return $user->id == $design->user_id;
     }
 
     public function download(User $user, Design $design)

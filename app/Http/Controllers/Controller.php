@@ -13,32 +13,29 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Input;
 use Intervention\Image\Facades\Image;
-use Intervention\Image\ImageManager;
-use Intervention\Image\ImageManagerStatic;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    public $lg_folder;
+    public $lg_prefix;
+    public $sm_folder;
+    public $sm_prefix;
+    public $thumbnail_width;
 
-    protected $full_size_path;
-    protected $full_size_prefix;
-    protected $small_size_path;
-    protected $small_size_prefix;
-    protected $thumbnail_width;
-    //users
-    protected $profile_image_prefix;
-    protected $bg_image_prefix;
-    protected $profile_image_width;
-    protected $profile_bg_width;
-    protected $user_image_folder;
-    protected $per_page;
+    public $profile_image_prefix;
+    public $bg_image_prefix;
+    public $profile_image_width;
+    public $profile_bg_width;
+    public $user_image_folder;
+    public $per_page;
     public function __construct()
     {
-        $this->full_size_path = 'full_size'; // storage path
-        $this->small_size_path = 'public'; // storage path
-        $this->full_size_prefix = 'full_size_';
-        $this->small_size_prefix = 'small_size_';
-        $this->thumbnail_width = 560;
+        $this->lg_folder = 'full_size'; // storage path
+        $this->sm_folder = 'public'; // storage path
+        $this->lg_prefix = 'lg_';
+        $this->sm_prefix = 'sm_';
+        $this->thumbnail_width = 960;
         //users
         $this->user_image_folder     = 'public';
         $this->bg_image_prefix       = 'profile_bg_';
@@ -56,13 +53,13 @@ class Controller extends BaseController
             $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
         }
 
-        if ($withDesign){
-            $designs = $user->designs()->get();
-            foreach ($designs as $design){
-                $this->designOBJ($design, false);
-            }
-            $user->designs = $designs;
+
+        $designs = $user->designs()->get();
+        foreach ($designs as $design){
+            $this->designOBJ($design);
         }
+        $user->designs = $designs;
+
         $user->followigns = $user->following()->get();
         $user->followers = $user->followers()->get();
         $user->likesCount = $user->likedDesigns()->count();
@@ -82,24 +79,34 @@ class Controller extends BaseController
         return $user;
     }
 
+    protected function userInfo(User $user){
+        if (isset($user->profile_image)){
+            $user->profile_image = url()->to("\\") . trim(Storage::url($this->user_image_folder . '/' . $user->profile_image), '/');
+        }
+        if (isset($user->profile_background)){
+            $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
+        }
+        if (isset($user->instagram)){
+            $user->instagram = 'https://instagram.com/' . $user->instagram;
+        }
+        return $user;
+    }
+
     /**
      * @param Design $design
      * @param bool $withUser
      * @param bool $withComments
      * @return proper Design OBJECT
      */
-    protected function designOBJ(Design $design, $withUser = true, $withComments = true){
+    protected function designOBJ(Design $design){
 
-        if ($withComments){
-            foreach($design->comments() as $comment){
-                $this->commentOBJ($comment , true, false);
-            };
-        }
-        if ($withUser){
-            $user = $design->user()->first();
-            $design->user = $this->userOBJ($user, false );
-        }
-        $design->small_image =  url()->to("\\") . trim(Storage::url( $this->small_size_prefix . $design->image), '/') ;
+        foreach($design->comments() as $comment){
+            $this->commentOBJ($comment , true, false);
+        };
+        $user = $design->user()->first();
+        $design->user = $this->userInfo($user, false );
+
+        $design->small_image =  url()->to("\\") . trim(Storage::url( $this->sm_folder . '/' . $this->sm_prefix . $design->image), '/') ;
         $design->donload_count = $design->download_users()->count();
         $design->donload_users = $design->download_users()->get();
         $design->likes = $design->likes()->get();
@@ -113,13 +120,11 @@ class Controller extends BaseController
      * @param bool $withDesign
      * @return Comment OBJECT with complete needed properties
      */
-    protected function commentOBJ(Comment $comment, $withUser = true, $withDesign = true){
-        if ($withUser ){
-            $comment->user = $this->userOBJ($comment->user, false);
-        }
-        if ($withDesign){
-            $comment->design = $this->designOBJ($comment->design , true, false);
-        }
+    protected function commentOBJ(Comment $comment){
+
+        $comment->user = $this->userInfo($comment->use);
+        $comment->design = $this->designOBJ($comment->design);
+
         return $comment;
     }
 
@@ -128,17 +133,17 @@ class Controller extends BaseController
      * @return bool true if deletion was successful
      * @return bool false if there is no existing file
      */
-    protected function deleteImage($imageName){
-        $full_image = Storage::disk('local')->exists($this->full_size_path . '/' . $this->full_size_prefix . $imageName);
-        $small_image = Storage::disk('local')->exists($this->small_size_path . '/' . $this->small_size_prefix . $imageName);
-        if ($small_image && $full_image){
-            return Storage::delete([
-                $this->full_size_path . '/' . $this->full_size_prefix . $imageName,
-                $this->small_size_path . '/' . $this->small_size_prefix . $imageName
-            ]);
+    protected function deleteImage($imageName , $profile = false){
+        if ($profile &&
+            file_exists(storage_path('app/' . $this->user_image_folder .  '/' . $imageName))){
+            Storage::delete( $this->user_image_folder . '/'  . $imageName);
         }
-        // file does exist
-        return false;
+        if (file_exists(storage_path('app/' . $this->sm_folder . '/' . $this->sm_prefix . $imageName))){
+            Storage::delete( $this->lg_folder . '/' . $this->lg_prefix . $imageName);
+        }
+        if (file_exists(storage_path('app/' . $this->lg_folder . '/' . $this->lg_prefix . $imageName))){
+            Storage::delete( $this->sm_folder . '/' . $this->sm_prefix . $imageName);
+        }
     }
 
     /**
@@ -147,23 +152,47 @@ class Controller extends BaseController
      */
     protected function storeImage($image){
         $extension = $image->getClientOriginalExtension();
-        // give it a name // we cant use image name maybe it contains sql
         $filename = date('Y-m-d_h-m-s') . '_' . str_random('4') . '.' . $extension;
-        $image->storeAs( $this->full_size_path,  $this->full_size_prefix . $filename);
+        $fullSizeName = $this->lg_prefix . $filename;
+        $smallSizeName = $this->sm_prefix . $filename;
         $image = Image::make($image->getRealPath());
+        $image->save(storage_path( 'app/' . $this->lg_folder . '/' . $fullSizeName));
         $data['original_width']  =  $image->getWidth();
         $data['original_height'] = $image->getHeight();
         if ($data['original_width'] > $this->thumbnail_width){
-            $image->resize($this->thumbnail_width,  function ($constraint) {
+            $image->widen($this->thumbnail_width,  function ($constraint) {
                 $constraint->upsize();
             });
-            $image->save(storage_path('app/' . $this->small_size_path . '/' . $this->small_size_prefix . $filename));
+            $image->save(storage_path('app/' . $this->sm_folder . '/' . $smallSizeName));
         }else{
-            $image->save(storage_path('app/' . $this->small_size_path . '/' .$this->small_size_prefix . $filename));
+            $image->save(storage_path('app/' . $this->sm_folder . '/' . $smallSizeName));
         }
 
         $data['image'] = $filename;
         return $data;
+    }
+
+    protected function storeProfile($image, $type){
+        $extension = $image->getClientOriginalExtension();
+        $user = auth()->user();
+        if ($type == 'profile_background'){
+            $filename  = $this->bg_image_prefix. date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
+            $image = Image::make($image->getRealPath());
+            $image->widen($this->profile_bg_width,  function ($constraint) {
+                $constraint->upsize();
+            });
+            $image->save(storage_path('app/' . $this->user_image_folder . '/' . $filename));
+            return $filename;
+        }
+        if ($type == 'profile_image'){
+            $filename  = $this->profile_image_prefix . date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
+            $image = Image::make($image->getRealPath());
+            $image->widen($this->profile_image_width,   function ($constraint) {
+                $constraint->upsize();
+            });// needs to be square
+            $image->save(storage_path('app/' . $this->user_image_folder . '/' . $filename));
+            return $filename;
+        }
     }
 
     /**
@@ -171,13 +200,22 @@ class Controller extends BaseController
      * @param string $size
      * @return bool|string
      */
-    protected function imagePath(string $image, $size = 'small'){
-        if ($size === 'full'){// full size
-            $path = storage_path($this->full_size_path . $image);
+    protected function imagePath(string $image, $type = 'small'){
+        if ($type === 'full'){// full size
+            $path = storage_path( $this->lg_folder . '/' . $this->lg_prefix . $image);
             return file_exists($path) ? $path : false;
         }
-        // small size
-        return file_exists(public_path($image)) ? public_path($image) : false;
+        if ($type === 'profile_background'){
+            $path = storage_path( $this->sm_folder . '/' . $this->bg_image_prefix . $image);
+            return file_exists($path) ? $path : false;
+        }
+        if ($type === 'profile_image'){
+            $path = storage_path( $this->sm_folder . '/' . $this->profile_image_prefix . $image);
+            return file_exists($path) ? $path : false;
+        }
+        // small size1
+        $path = storage_path($this->sm_folder . '/' . $this->sm_prefix . $image);
+        return file_exists($path) ? $path : false;
     }
 
     /**
@@ -189,11 +227,11 @@ class Controller extends BaseController
     protected function imageUrl(string $image, $size = 'small'){
         if ($size === 'full'){
             return $this->imagePath($image, 'full') ?
-                Storage::url( $this->full_size_path . '/' . $this->full_size_prefix . $image) : false;
+                Storage::url( $this->lg_folder . '/' . $this->lg_prefix . $image) : false;
         }
         // small size
         return $this->imagePath($image) ?
-            Storage::url($this->small_size_path . '/' . $this->small_size_prefix ) : false ;
+            Storage::url($this->sm_folder . '/' . $this->sm_prefix . $image) : false ;
     }
 
     /**

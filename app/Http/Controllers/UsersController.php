@@ -11,9 +11,23 @@ use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
+    public $profile_image_prefix;
+    public $bg_image_prefix;
+    public $profile_image_width;
+    public $profile_bg_width;
+    public $user_image_folder;
+    public $per_page;
+
     public function __construct()
     {
         $this->middleware('auth:api');
+        //users
+        $this->user_image_folder     = 'public';
+        $this->bg_image_prefix       = 'profile_bg_';
+        $this->profile_image_prefix  = 'profile_image_';
+        $this->profile_image_width   = 100;
+        $this->profile_bg_width      = 900;
+        $this->per_page = 20;
     }
 
     public function index()
@@ -44,36 +58,23 @@ class UsersController extends Controller
             'profile_background' => 'image',
             'profile_image' => 'image'
         ]);
+
         $data = $request->only('username', 'instagram', 'email', 'bio' );
         if ($instagram = $request->instagram){
             $data['instagram'] =  $instagram;
         }
         $user = $request->user();
         if ($image = $request->file('profile_image')){
-            $extension = $image->getClientOriginalExtension();
-            $filename  = $this->profile_image_prefix . date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
-            if ($this->storeImage($filename, $image, $this->profile_image_width)){
+            if ($data['profile_image'] = $this->storeProfile($image, 'profile_image')){
                 if ($old_filename = $user->profile_image){
-                    if ($this->deleteFile($old_filename)){
-                        $data['profile_image']  =  $filename;
-                    }
-                }else{
-                    $data['profile_image']  =  $filename;
+                    $this->deleteImage ($old_filename , true); // name has already contained prefix
                 }
             }
         }
         if ($image = $request->file('profile_background')){
-            // checking if profile background needs to be changed
-            $extension = $image->getClientOriginalExtension();
-            $filename  = $this->bg_image_prefix . date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
-            if ($this->storeImage($filename, $image, $this->profile_bg_width )){// if saving was successful
-                // now we delete the old one
+            if ($data['profile_background'] = $this->storeProfile($image, 'profile_background')){
                 if ($old_filename = $user->profile_background){
-                    if ($this->deleteFile($old_filename)){
-                        $data['profile_background']  =  $filename;
-                    }
-                }else{
-                    $data['profile_background']  =  $filename;
+                    $this->deleteImage($old_filename, true);
                 }
             }
         }
@@ -95,8 +96,8 @@ class UsersController extends Controller
             }
             $logged_in_user->following()->toggle($user->id);
             $response = [
-                'followers' => $user->followers()->get(),
-                'loged_in_user_followers' => $logged_in_user->following()->get()
+                'followers' => $logged_in_user->followers()->get(),
+                'loged_in_user_followings' => $logged_in_user->following()->get()
             ];
             return response()->json($response, 201);
 
@@ -129,19 +130,4 @@ class UsersController extends Controller
         ];
         return response()->json($response, 200);
     }
-
-//    protected function storeImage($filename, $image, $width){
-//        $image = Image::make($image->getRealPath());
-//        $image->widen($width, function ($constraint) {
-//            $constraint->upsize();
-//        });
-//        return $image->save(storage_path('app/' . $this->user_image_folder . '/' . $filename)) ? true : false;
-//    }
-//
-//    protected function deleteFile($filename){
-//        $image = Storage::disk('local')->exists($this->user_image_folder . '/' . $filename);
-//        if ($image){
-//            return Storage::delete($this->user_image_folder . '/' . $filename);
-//        }
-//    }
 }

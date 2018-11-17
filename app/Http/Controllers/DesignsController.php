@@ -6,15 +6,24 @@ use App\Design;
 use App\Http\Requests\DesignRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
 class DesignsController extends Controller
 {
+    public $lg_folder;
+    public $lg_prefix;
+    public $sm_folder;
+    public $sm_prefix;
+    public $thumbnail_width;
+
     public function __construct()
     {
         $this->middleware('auth:api');
-
+        $this->lg_folder = 'full_size'; // storage path
+        $this->sm_folder = 'public'; // storage path
+        $this->lg_prefix = 'lg_';
+        $this->sm_prefix = 'sm_';
+        $this->thumbnail_width = 960;
     }
 
 
@@ -51,10 +60,12 @@ class DesignsController extends Controller
             $image = $design->image;
             $request->user()->downloads()->detach($design->id);
             $request->user()->downloads()->attach($design->id);
-            $path = storage_path('app/' . $this->full_size_path) . "/" . $this->full_size_prefix . $image;
-            return Response::download($path);
+            $path = $this->imagePath($image, 'full');
+            return $path ? Response::download($path) :
+                response()->json(['message' => 'cant find the file to download. please try later'], 404);
+
         } else {
-            return response()->json(['message', 'this design is not allowed to be downloaded'], 403);
+            return response()->json(['message' => 'this design is not allowed to be downloaded'], 403);
         }
     }
 
@@ -93,12 +104,11 @@ class DesignsController extends Controller
     public function delete(Design $design)
     {
             if (Gate::allows('deleteDesign', $design)){
-                $image = $design->image;
                 $this->deleteImage($design->image);
                 $result = $design->delete();
                 return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
             }
-            return response()->json(['message' => 'this design does not belong to you', 'des' => $request], 403);
+            return response()->json(['message' => 'this design does not belong to you'], 403);
 
 //        return response()->json(['message' => 'design not found. please try deleting some other'], 404);
     }
@@ -124,12 +134,12 @@ class DesignsController extends Controller
             $design->update($data);
 
             $response = [
-                'message' => 'design successfully created',
+                'message' => 'design successfully updated',
                 'design' => $this->DesignOBJ($design)
             ];
             return response()->json($response, 200);
         }
-        return response()->json($response, 200);
+        return response()->json('you are not allowed to modify this design.', 403);
     }
 
 
@@ -142,7 +152,7 @@ class DesignsController extends Controller
         $designs = [];
         foreach ($followings as $user) {
             if ($user->design){
-                array_push($designs, $this->designOBJ($user->design, false, true));
+                array_push($designs, $this->designOBJ($user->design));
             }
         }
 
@@ -159,7 +169,7 @@ class DesignsController extends Controller
         ]);
         $designs = Design::findMany($request->input('ids'));
         foreach ($designs as $design){
-            $this->DesignOBJ($design, true);
+            $this->DesignOBJ($design);
         }
         return response()->json($designs, 201);
     }
