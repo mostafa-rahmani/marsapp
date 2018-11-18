@@ -6,28 +6,17 @@
 @section('navbar')
   <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <button class="navbar-toggler border-0" type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="http://{{ $data->app_download_url }}">دانلود اپ</a>
-                    </li>
-                </ul>
-                <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">پرتقال</a></h1>
-            </div>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">درباره ما</a>
+                </li>
+            </ul>
+            <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">اپلیکیشن مارس</a></h1>
         </div>
   </nav>
 @endsection
 @section('content')
-  <div class="container">
-    <div id="landing-page" class="d-flex flex-column justify-content-center">
+    <div id="landing-page" class="d-flex flex-column justify-content-center container">
         @if($flash = session('changed_pass_msg'))
             <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
         @endif
@@ -46,5 +35,4 @@
            <div class="col-lg-3 text-center"></div>
        </div>
     </div>
-  </div>
 @endsection

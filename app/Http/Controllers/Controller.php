@@ -87,7 +87,7 @@ class Controller extends BaseController
             $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
         }
         if (isset($user->instagram)){
-            $user->instagram = 'https://instagram.com/' . $user->instagram;
+            $user->instagram_url = 'https://instagram.com/' . $user->instagram;
         }
         return $user;
     }
@@ -99,9 +99,9 @@ class Controller extends BaseController
      * @return proper Design OBJECT
      */
     protected function designOBJ(Design $design){
-
-        foreach($design->comments() as $comment){
-            $this->commentOBJ($comment , true, false);
+        $design->comments = $design->comments()->get();
+        foreach($design->comments as $comment){
+            $this->commentOBJ($comment);
         };
         $user = $design->user()->first();
         $design->user = $this->userInfo($user, false );
@@ -121,10 +121,7 @@ class Controller extends BaseController
      * @return Comment OBJECT with complete needed properties
      */
     protected function commentOBJ(Comment $comment){
-
-        $comment->user = $this->userInfo($comment->use);
-        $comment->design = $this->designOBJ($comment->design);
-
+        $comment->user = $this->userInfo($comment->user);
         return $comment;
     }
 

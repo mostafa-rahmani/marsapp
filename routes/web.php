@@ -13,6 +13,7 @@
 Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
+Route::get('/about', 'AdminController@about')->name('about');
 
 Route::group(['prefix' => 'auth'], function (){
     Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');

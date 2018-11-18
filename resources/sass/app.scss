@@ -9,15 +9,13 @@
 
 @import 'global';
 
-body {
+ body{
     min-height: 100vh;
-    background: url("/img/plans-bg-left.svg");
-    background-position: center left;
-    background-repeat: no-repeat;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+     background-color: #fff;
 }
-body:after{
+#landing-page:after{
     display: block;
     content: "";
     position: absolute;
@@ -33,7 +31,11 @@ body:after{
 
 }
 #landing-page{
+    min-width: 100vw;
     min-height: 100vh;
+    background: url("/img/plans-bg-left.svg");
+    background-position: center left;
+    background-repeat: no-repeat;
     padding: 50px;
     h1{
         font-size: 2em;
@@ -82,30 +84,156 @@ a:hover {
     -moz-box-shadow: 0px 0px 13px 3px #7979791c;
     box-shadow: 0px 0px 13px 3px #7979791c;
 }
+
+// ========== about page ==========
+#about-page{
+    padding-top: 100px;
+    .dialog-box{
+        width: 450px;
+        min-height: 500px;
+        margin: 50px 0;
+        position: relative;
+        align-content: center;
+        font-size: 1.4em;
+    }
+    .dialog-box__first:before{
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 550px;
+        width: 450px;
+        height: 460px;
+        background: url("/img/designing.jpg");
+        background-position: center center;
+        -webkit-background-size: cover;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    .dialog-box__second:after{
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 550px;
+        width: 450px;
+        height: 460px;
+        background: url("/img/photograph.jpg");
+        background-position: center center;
+        -webkit-background-size: cover;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+}
+
+#main-footer{
+    margin-top: 100px;
+    background-color: #e2e3e5;
+    .footer-left{
+        background-color: #fff;
+    }
+}
+
+#developers{
+    background-color: transparent;
+    .developer-img{
+        width: 200px;
+        height: 200px;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        border-radius: 100px;
+    }
+    .card{
+        background-color: transparent;
+        position: relative;
+    }
+    .card:before{
+        content: "";
+        display: block;
+        width: 200px;
+        height: 200px;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        border-radius: 100px;
+        cursor: pointer;
+    }
+
+
+    .card__one:before{
+        background: url("/img/designing.jpg");
+        background-repeat: no-repeat;
+        -webkit-background-size: cover;
+        background-size: cover;
+        background-position: center center;
+    }
+    .card__two:before{
+        background: url("/img/photograph.jpg");
+        background-repeat: no-repeat;
+        -webkit-background-size: cover;
+        background-size: cover;
+        background-position: center center;
+    }
+
+}
+
+@media screen and (max-width: 1024px){
+    #landing-page{
+        -webkit-background-size: 800px;
+        background-size: 800px;
+        background-position: center left;
+    }
+    #landing-page:after{
+        display: none;
+        -webkit-background-size: 400px;
+        background-size: 400px;
+        background-position: bottom right;
+    }
+    #landing-page{
+        h1, p{
+            color: #f5f8fa;
+        }
+    }
+}
+
 @media screen and (max-width: 960px){
     #reset_pass_form{
         box-shadow: none;
     }
-    #landing-page {
+    #landing-page{
         padding: 0px;
-        h1{
-            font-size: 1.4em;
-            color: #f5f8fa;
-        }
-        p{
-            color: #f5f8fa;
+        h1, p{
+            color: #2F3133;
         }
     }
-    body:after{
-        display: none;
-        //content: "";
-        //z-index: -1;
-        //position: absolute;
-        //top: 0;
-        //left: 0;
-        //right: 0;
-        //bottom: 0;
-        //background: rgba(255, 255, 255, .7);
+    #landing-page {
+        -webkit-background-size: 250px;
+        background-size: 250px;
+        background-position: top left;
+    }
+    #landing-page:after{
+        display: block;
+        -webkit-background-size: 250px;
+        background-size: 250px;
+        background-position: bottom right;
+    }
+}
+
+@media screen and (max-width: 760px){
+    #landing-page{
+        h1, p{
+            color: #2F3133;
+        }
+    }
+    #landing-page{
+        -webkit-background-size: 190px;
+        background-size: 190px;
+        background-position: top left;
+    }
+    #landing-page:after{
+        display: block;
+        -webkit-background-size: 140px;
+        background-size: 140px;
+        background-position: bottom right;
     }
 }
 

@@ -27,7 +27,7 @@ class AdminController extends Controller
     public function __construct()
     {
 
-        $this->middleware('auth')->except('home');
+        $this->middleware('auth')->except('home', 'about');
         $this->lg_folder = 'full_size'; // storage path
         $this->sm_folder = 'public'; // storage path
         $this->lg_prefix = 'lg_';
@@ -141,6 +141,11 @@ class AdminController extends Controller
         $design->blocked = !$design->blocked;
         $design->save();
         return redirect()->back();
+    }
+
+    public function about()
+    {
+        return view('about');
     }
 
 }
