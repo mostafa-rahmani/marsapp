@@ -79,4 +79,82 @@
                 </div>
             </div>
 	</div>
+    <div class="jumbotron-fluid">
+        <h4 class="text-black-50">تنظیمات بخش فوتر وبسایت</h4>
+        <hr>
+
+            {{ csrf_field() }}
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <form class="mt-5" enctype="multipart/form-data" action="/admin/footer/settings" method="POST">
+                        {{ csrf_field() }}
+                        {{--<input type="hidden" name="_method" value="PATCH">--}}
+                        <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="card border-0 shadow-none" >
+                                <img src="{{ Storage::url('public/' . $settings->web_developer_img) }}" alt="" class="rounded img-thumbnail border-0"
+                                     style="width: 200px; height: 200px;">
+                                <label for="about_form_picture">تصویر مصطفی رحمانی</label>
+                                <input type="file" name="web_developer_img" id="web_developer_img">
+                                <input type="text" placeholder="لینک برای این تصویر" value="{{ $settings->web_developer_url }}" class="my-3 form-control "
+                                       name="web_developer_url">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="card shadow-none border-0">
+                                <img src="{{ Storage::url('public/' . $settings->android_developer_img) }}" alt="" class="rounded img-thumbnail border-0"
+                                     style="width: 200px; height: 200px;">
+                                <label for="about_form_picture">تصویر علیرضا عیسی زاده</label>
+                                <input type="file" id="android_developer_img" name="android_developer_img" >
+                                <input type="text" name="android_developer_url" value="{{ $settings->android_developer_url }}"
+                                       placeholder="لینک برای این تصویر" class="form-control my-3">
+                            </div>
+                        </div>
+                    </div>
+                        <button class="btn my-3 mx-auto btn-warning px-5">ذخیره تغییرات</button>
+                    </form>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <form action="/admin/footerlink" method="POST" class="mt-5">
+                        {{ csrf_field() }}
+                        <input name="_method" type="hidden" value="PATCH">
+                        <div class="py-4">
+                            <h6 class="text-right d-inlin float-right">لینک های فووتر</h6>
+                            <button class="btn mx-auto btn-sm float-left btn-warning px-5">ذخیره تغییرات</button>
+                        </div>
+                        <hr>
+                        <ul class="list-group mt-3">
+                            @foreach($footer_links as $item)
+                                <li class="list-group-item border-0 px-0">
+                                    <input type="text" class="form-control d-inline float-right" style="width: 300px"
+                                           name="footer_links[{{$item->id}}][footer_link]" value="{{ $item->footer_link }}">
+                                    <input type="hidden" name="footer_links[{{$item->id}}][id]" value="{{ $item->id }}">
+                                    <input type="text" class="d-inline form-control float-right" style="width: 300px;"
+                                           @if($item->footer_url)
+                                           placeholder="بدون آدرس"
+                                           @endif
+                                           name="footer_links[{{$item->id}}][footer_url]" value="{{ $item->footer_url }}">
+
+                                    <a href="/admin/footerlink/{{ $item->id }}/delete" class="btn btn-danger px-3 d-inline float-left">حذف</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </form>
+
+                    <form action="/admin/footerlink" method="POST" class="mt-3">
+                        {{ csrf_field() }}
+
+                        <h6 class="text-right">لینک جدید برای فووتر</h6>
+                        <hr>
+                        <div class="py-3">
+                            <input type="text" class="d-inline float-right form-control"
+                                   style="width: 300px" placeholder="متن لینک " name="footer_link">
+                            <input type="text" class="d-inline float-right form-control"
+                                   style="width: 300px" placeholder="آدرس برای لینک" name="footer_url">
+                            <button class="btn btn-info px-3 float-left" type="submit">اضافه کن</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
 @endsection

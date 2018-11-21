@@ -13,7 +13,7 @@
 Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
-Route::get('/about', 'AdminController@about')->name('about');
+Route::get('/about', 'aboutController@about')->name('about');
 
 Route::group(['prefix' => 'auth'], function (){
     Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');
@@ -35,4 +35,12 @@ Route::group(['prefix'=> 'admin'], function(){
 	Route::get('/designs/{design}/block', 'AdminController@blockDesign');
     Route::post('/roles/manager', 'AdminController@toggleManager');
     Route::get('/roles/manager/{user}', 'AdminController@removeManager');
+    //== footer
+    Route::patch('/footerlink' , 'AdminController@footerlinks');
+    Route::post('/footerlink', 'AdminController@footerlinks');
+    Route::get('/footerlink/{id}/delete', 'AdminController@deleteLink');
+    Route::post('/footer/settings', 'AdminController@footerSettings');
+    // == about page ==
+    Route::get('/about', 'aboutController@aboutAdmin');
+    Route::post('/about', 'aboutController@update');
 });

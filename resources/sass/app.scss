@@ -53,11 +53,6 @@
     right: 0;
 }
 
-///
-/*
- * Globals
- */
-
 /* Links */
 a,
 a:focus,
@@ -88,41 +83,12 @@ a:hover {
 // ========== about page ==========
 #about-page{
     padding-top: 100px;
-    .dialog-box{
-        width: 450px;
-        min-height: 500px;
+    .about-item img{
+        width: 300px;
+        height: 300px;
+    }
+    .about-item{
         margin: 50px 0;
-        position: relative;
-        align-content: center;
-        font-size: 1.4em;
-    }
-    .dialog-box__first:before{
-        display: block;
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 550px;
-        width: 450px;
-        height: 460px;
-        background: url("/img/designing.jpg");
-        background-position: center center;
-        -webkit-background-size: cover;
-        background-size: cover;
-        background-repeat: no-repeat;
-    }
-    .dialog-box__second:after{
-        display: block;
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 550px;
-        width: 450px;
-        height: 460px;
-        background: url("/img/photograph.jpg");
-        background-position: center center;
-        -webkit-background-size: cover;
-        background-size: cover;
-        background-repeat: no-repeat;
     }
 }
 
@@ -147,31 +113,12 @@ a:hover {
         background-color: transparent;
         position: relative;
     }
-    .card:before{
-        content: "";
-        display: block;
+    .card img{
         width: 200px;
         height: 200px;
         -webkit-border-radius: 100px;
         -moz-border-radius: 100px;
         border-radius: 100px;
-        cursor: pointer;
-    }
-
-
-    .card__one:before{
-        background: url("/img/designing.jpg");
-        background-repeat: no-repeat;
-        -webkit-background-size: cover;
-        background-size: cover;
-        background-position: center center;
-    }
-    .card__two:before{
-        background: url("/img/photograph.jpg");
-        background-repeat: no-repeat;
-        -webkit-background-size: cover;
-        background-size: cover;
-        background-position: center center;
     }
 
 }
@@ -192,6 +139,10 @@ a:hover {
         h1, p{
             color: #f5f8fa;
         }
+    }
+
+    #about-page .dialog-box{
+        max-width: 300px
     }
 }
 
@@ -216,6 +167,8 @@ a:hover {
         background-size: 250px;
         background-position: bottom right;
     }
+
+
 }
 
 @media screen and (max-width: 760px){
@@ -235,6 +188,14 @@ a:hover {
         background-size: 140px;
         background-position: bottom right;
     }
+    .about-item img{
+        width: 200px !important;
+        height: 200px !important;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        border-radius: 100px;
+    }
+
 }
 
 

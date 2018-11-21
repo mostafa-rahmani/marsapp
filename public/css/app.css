@@ -10608,10 +10608,6 @@ body {
   right: 0;
 }
 
-/*
- * Globals
- */
-
 /* Links */
 
 a,
@@ -10644,42 +10640,13 @@ a:hover {
   padding-top: 100px;
 }
 
-#about-page .dialog-box {
-  width: 450px;
-  min-height: 500px;
+#about-page .about-item img {
+  width: 300px;
+  height: 300px;
+}
+
+#about-page .about-item {
   margin: 50px 0;
-  position: relative;
-  -ms-flex-line-pack: center;
-      align-content: center;
-  font-size: 1.4em;
-}
-
-#about-page .dialog-box__first:before {
-  display: block;
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 550px;
-  width: 450px;
-  height: 460px;
-  background: url("/img/designing.jpg");
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-#about-page .dialog-box__second:after {
-  display: block;
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 550px;
-  width: 450px;
-  height: 460px;
-  background: url("/img/photograph.jpg");
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
 }
 
 #main-footer {
@@ -10706,27 +10673,10 @@ a:hover {
   position: relative;
 }
 
-#developers .card:before {
-  content: "";
-  display: block;
+#developers .card img {
   width: 200px;
   height: 200px;
   border-radius: 100px;
-  cursor: pointer;
-}
-
-#developers .card__one:before {
-  background: url("/img/designing.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-}
-
-#developers .card__two:before {
-  background: url("/img/photograph.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
 }
 
 @media screen and (max-width: 1024px) {
@@ -10744,6 +10694,10 @@ a:hover {
   #landing-page h1,
   #landing-page p {
     color: #f5f8fa;
+  }
+
+  #about-page .dialog-box {
+    max-width: 300px;
   }
 }
 
@@ -10789,6 +10743,12 @@ a:hover {
     display: block;
     background-size: 140px;
     background-position: bottom right;
+  }
+
+  .about-item img {
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 100px;
   }
 }
 

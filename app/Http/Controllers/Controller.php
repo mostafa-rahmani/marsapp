@@ -53,7 +53,6 @@ class Controller extends BaseController
             $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
         }
 
-
         $designs = $user->designs()->get();
         foreach ($designs as $design){
             $this->designOBJ($design);

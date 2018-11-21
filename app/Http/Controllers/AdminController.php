@@ -7,7 +7,7 @@ use App\Setting;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 
 class AdminController extends Controller
 {
@@ -107,7 +107,8 @@ class AdminController extends Controller
     {
         $settings = Setting::firstOrFail();
         $users = User::all();
-    	return view('admin.settings', compact('settings', 'users'));
+        $footer_links = DB::table('footer_link')->get();
+    	return view('admin.settings', compact('settings', 'users', 'footer_links'));
     }
 
     public function updateSettings(Request $request)
@@ -143,9 +144,62 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function about()
+    public function footerSettings(Request $request)
     {
-        return view('about');
+        $data = $request->only('web_developer_img', 'web_developer_url', 'android_developer_img', 'android_developer_url');
+        if ($image = $request->file('web_developer_img')){
+            ini_set('memory_limit','256M');
+            $filename = 'web_developer_img_' . '.' . $image->getClientOriginalExtension();
+            $img = Image::make($image->getRealPath());
+            $img->resize(400, 400)->save(storage_path('app/public/' . $filename));
+            $data['web_developer_img'] = $filename;
+        }
+        if ($image = $request->file('android_developer_img')){
+            $filename = 'android_developer_img_' . '.' . $image->getClientOriginalExtension();
+            $img = Image::make($image->getRealPath());
+            $img->resize(400, 400)->save(storage_path('app/public/' . $filename));
+            $data['android_developer_img'] = $filename;
+        }
+        if (Setting::first()->update($data)){
+            session()->flash('message', 'تنظیمات با موفقیت به روزرسانی شد.');
+            return redirect()->back();
+        }
+        session()->flash('message', 'بروزرسانی تنظیمات موفق نبود لطفا دوباره تلاش کنید.');
+        return redirect()->back();
+
+    }
+
+    public function footerLinks(Request $request)
+    {
+
+        if ($request->method() == 'POST'){
+            $data = $request->only('footer_link', 'footer_url');
+            DB::table('footer_link')->insert($data);
+            session()->flash('message', 'لینک ها با موفقیت ذخیره شدند.');
+            return redirect()->back();
+        }else{
+            $data = $request->only('footer_links');
+            foreach ($data as $item){
+                foreach ($item as $value){
+                    if ($row = DB::table('footer_link')->where('id', $value['id'])){
+                        $row->update($value);
+                    }
+                }
+            }
+            session()->flash('message', 'لینک ها با موفقیت ذخیره شدند.');
+            return redirect()->back();
+        }
+    }
+
+    public function deleteLink(Request $request)
+    {
+        $id = $request->id;
+        if ($row = DB::table('footer_link')->where('id', $id)){
+            $row->delete();
+        }
+
+        session()->flash('message', 'لینک با موفقیت حذف شد');
+        return redirect()->back();
     }
 
 }

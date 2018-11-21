@@ -19,13 +19,39 @@ class SettingsTable extends Migration
             $table->string('landing_description')->nullable();
             $table->string('app_download_url')->nullable();
             $table->boolean('admin_register_on')->nullable()->default(1);
+
+            $table->string('about_first_text')->nullable();
+            $table->string('about_first_img')->nullable();
+            $table->string('about_second_text')->nullable();
+            $table->string('about_second_img')->nullable();
+
+            $table->string('web_developer_img')->nullable();
+            $table->string('web_developer_url')->nullable();
+
+            $table->string('android_developer_img')->nullable();
+            $table->string('android_developer_url')->nullable();
+
             $table->timestamps();
         });
         $data = [
             'landing_title' => 'اپلیکیشن پرتقال برای تمام طراحان',
-            'landing_description' => 'طراح هستید یا نقاش و شاید هنرمند، اپ پرتقال رو نصب کنید و ایده ها و طرح هاتون رو با هم به اشتراک بزارید و بازخورد دوستاتون رو هم داشته باشید.',
+            'landing_description' => 'طراح هستید یا نقاش و شاید هنرمند، اپ پرتقال رو نصب کنید و ایده ها
+             و طرح هاتون رو با هم به اشتراک بزارید
+             و بازخورد دوستاتون رو هم داشته باشید.',
             'app_download_url' => 'cafebazaar.ir',
-            'admin_register_on' => 1
+            'admin_register_on' => 1,
+
+            'about_first_text' => 'این یک دیتای ساختگی است. تنها برای تست',
+            'about_second_text' => 'این یک دیتای ساختگی است. تنها برای تست',
+            'about_first_img' => 'https://getbootstrap.com/docs/4.1/assets/img/bootstrap-stack.png',
+            'about_second_img' => 'https://getbootstrap.com/docs/4.1/assets/img/bootstrap-stack.png',
+
+            'web_developer_img' => 'https://unsplash.com/photos/oTweoxMKdkA',
+            'web_developer_url' => 'https://unsplash.com/photos/oTweoxMKdkA',
+
+            'android_developer_img' => 'https://unsplash.com/photos/kBlqlwbuxHU',
+            'android_developer_url' => 'https://unsplash.com/photos/kBlqlwbuxHU'
+
         ];
         \App\Setting::create($data);
     }
