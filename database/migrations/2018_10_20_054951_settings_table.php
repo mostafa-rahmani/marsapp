@@ -20,9 +20,9 @@ class SettingsTable extends Migration
             $table->string('app_download_url')->nullable();
             $table->boolean('admin_register_on')->nullable()->default(1);
 
-            $table->string('about_first_text')->nullable();
+            $table->text('about_first_text')->nullable();
             $table->string('about_first_img')->nullable();
-            $table->string('about_second_text')->nullable();
+            $table->text('about_second_text')->nullable();
             $table->string('about_second_img')->nullable();
 
             $table->string('web_developer_img')->nullable();
