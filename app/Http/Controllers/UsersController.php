@@ -92,12 +92,25 @@ class UsersController extends Controller
     {
             $logged_in_user = $request->user();
             if ($logged_in_user->id == $user->id){// in case user wants to follow/unfollow himself
-                abort(401);
+                return response()->json(['message' => 'you can not follow your acount', ], 403);
             }
             $logged_in_user->following()->toggle($user->id);
+            
+            
+            $followings = $logged_in_user->following()->get();
+            foreach ($followings as $user) {
+                $this->userOBJ($user);
+            }
+
+            $followers = $logged_in_user->followers()->get();
+            foreach ($followers as $user ) {
+                $this->userOBJ($user);
+            }
+
+
             $response = [
-                'followers' => $logged_in_user->followers()->get(),
-                'loged_in_user_followings' => $logged_in_user->following()->get()
+                'followers' => $followers,
+                'loged_in_user_followings' => $followings
             ];
             return response()->json($response, 201);
 
@@ -124,9 +137,19 @@ class UsersController extends Controller
     {
         $logged_in_user = $request->user();
         $design->likes()->toggle($logged_in_user->id);
+        $design_likes = $design->likes()->get();
+        foreach ($design_likes as $user ) {
+            $this->userOBJ($user);
+        }
+
+        $liked_Designs =  $logged_in_user->likedDesigns()->get();
+        foreach ($liked_Designs as $design ) {
+            $this->designOBJ($design);
+        }
+
         $response = [
-            'design_likes' => $design->likes()->get(),
-            'design_this_user_liked' => $logged_in_user->likedDesigns()->get()
+            'design_likes' => $design_likes,
+            'design_this_user_liked' => $liked_Designs
         ];
         return response()->json($response, 200);
     }

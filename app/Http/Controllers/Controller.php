@@ -62,7 +62,12 @@ class Controller extends BaseController
         $user->followigns = $user->following()->get();
         $user->followers = $user->followers()->get();
         $user->likesCount = $user->likedDesigns()->count();
+
         $user->liked_designs = $user->likedDesigns()->get();
+        foreach ($user->liked_designs as $design ) {
+            $this->designOBJ($design);
+        }
+
         $seenComments = $user->comments()->where('seen', 1)->get();
         foreach ($seenComments as $comment){
             $this->commentOBJ($comment, false, false);
@@ -106,9 +111,19 @@ class Controller extends BaseController
         $design->user = $this->userInfo($user, false );
 
         $design->small_image =  url()->to("\\") . Storage::url( $this->sm_folder . '/' . 'sm_' . $design->image);
-        $design->donload_count = $design->download_users()->count();
-        $design->donload_users = $design->download_users()->get();
-        $design->likes = $design->likes()->get();
+        $design->download_count = $design->download_users()->count();
+
+        $design->download_users = $design->download_users()->get();
+        foreach ($design->download_users as $user ) {
+            $this->userInfo($user);
+        }
+
+        $likes = $design->likes()->get();
+        foreach ($likes as $user ) {
+            $this->userInfo($user);
+        }
+        $design->likes = $likes;
+
         $design->like_count = $design->likes()->count();
         return $design;
     }
