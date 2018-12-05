@@ -45,99 +45,12 @@ class Controller extends BaseController
         $this->per_page = 20;
     }
 
-    protected function userOBJ(User $user, $withDesign = true){
-        if (isset($user->profile_image)){
-            $user->profile_image = url()->to("\\") . trim(Storage::url($this->user_image_folder . '/' . $user->profile_image), '/');
-        }
-        if (isset($user->profile_background)){
-            $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
-        }
 
-        $designs = $user->designs()->get();
-        foreach ($designs as $design){
-            $this->designOBJ($design);
-        }
-        $user->designs = $designs;
 
-        $user->followigns = $user->following()->get();
-        $user->followers = $user->followers()->get();
-        $user->likesCount = $user->likedDesigns()->count();
 
-        $user->liked_designs = $user->likedDesigns()->get();
-        foreach ($user->liked_designs as $design ) {
-            $this->designOBJ($design);
-        }
 
-        $seenComments = $user->comments()->where('seen', 1)->get();
-        foreach ($seenComments as $comment){
-            $this->commentOBJ($comment, false, false);
-        }
-        $user->seenComments = $seenComments;
 
-        $download_count = 0;
-        foreach ($user->designs()->get() as $design){
-            $download_count = $download_count + $design->download_users()->count();
-        }
-        $user->download_count = $download_count;
 
-        return $user;
-    }
-
-    protected function userInfo(User $user){
-        if (isset($user->profile_image)){
-            $user->profile_image = url()->to("\\") . trim(Storage::url($this->user_image_folder . '/' . $user->profile_image), '/');
-        }
-        if (isset($user->profile_background)){
-            $user->profile_background = url()->to("\\") . trim( Storage::url($this->user_image_folder . '/' . $user->profile_background), '/');
-        }
-        if (isset($user->instagram)){
-            $user->instagram_url = 'https://instagram.com/' . $user->instagram;
-        }
-        return $user;
-    }
-
-    /**
-     * @param Design $design
-     * @param bool $withUser
-     * @param bool $withComments
-     * @return proper Design OBJECT
-     */
-    protected function designOBJ(Design $design){
-        $design->comments = $design->comments()->get();
-        foreach($design->comments as $comment){
-            $this->commentOBJ($comment);
-        };
-        $user = $design->user()->first();
-        $design->user = $this->userInfo($user, false );
-
-        $design->small_image =  url()->to("\\") . Storage::url( $this->sm_folder . '/' . 'sm_' . $design->image);
-        $design->download_count = $design->download_users()->count();
-
-        $design->download_users = $design->download_users()->get();
-        foreach ($design->download_users as $user ) {
-            $this->userInfo($user);
-        }
-
-        $likes = $design->likes()->get();
-        foreach ($likes as $user ) {
-            $this->userInfo($user);
-        }
-        $design->likes = $likes;
-
-        $design->like_count = $design->likes()->count();
-        return $design;
-    }
-
-    /**
-     * @param Comment $comment
-     * @param bool $withUser
-     * @param bool $withDesign
-     * @return Comment OBJECT with complete needed properties
-     */
-    protected function commentOBJ(Comment $comment){
-        $comment->user = $this->userInfo($comment->user);
-        return $comment;
-    }
 
     /**
      * @param $imageName
@@ -283,7 +196,6 @@ class Controller extends BaseController
     private function transformAnswers($answers, $offset, $perPage)
     {
         $answers = array_slice($answers, $offset, $perPage, true);
-
         return $answers;
     }
 

@@ -32,16 +32,18 @@ class UsersController extends Controller
 
     public function index()
     {
-        $users = User::all();
-        foreach ($users as $user){
-            $this->userOBJ($user);
-        }
+        $users = User::with(
+                'seenComments', 'designs', 'following',
+                        'followers', 'likedDesigns', 'comments')->get();
         return $users;
     }
 
-    public function show(User $user)
+    public function show(Request $request)
     {
-        parent::userOBJ($user);
+        $user = User::with(
+                'seenComments', 'designs', 'following',
+                'followers', 'likedDesigns', 'comments'
+                )->find($request->user);
         return response()->json($user, 201);
     }
 
@@ -79,7 +81,7 @@ class UsersController extends Controller
             }
         }
         $user->update($data);
-        return parent::userOBJ($user);
+        return response()->json($user->loadMissing('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments'), 200);
     }
 
     /**
@@ -95,19 +97,14 @@ class UsersController extends Controller
                 return response()->json(['message' => 'you can not follow your acount', ], 403);
             }
             $logged_in_user->following()->toggle($user->id);
-            
-            
-            $followings = $logged_in_user->following()->get();
-            foreach ($followings as $user) {
-                $this->userOBJ($user);
-            }
-
-            $followers = $logged_in_user->followers()->get();
-            foreach ($followers as $user ) {
-                $this->userOBJ($user);
-            }
 
 
+            $followings = $logged_in_user->following()
+                                    ->with('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments')
+                                    ->get();
+            $followers = $logged_in_user->followers()
+                                        ->with('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments')
+                                        ->get();
             $response = [
                 'followers' => $followers,
                 'loged_in_user_followings' => $followings
@@ -123,13 +120,20 @@ class UsersController extends Controller
      */
     public function followings(User $user)
     {
-        $followings = $user->following()->get();
+        $followings = $user->following()
+                            ->with(
+                            'seenComments', 'designs', 'following',
+                                    'followers', 'likedDesigns', 'comments')
+                            ->get();
         return response()->json($followings, 200);
     }
 
     public function followers(User $user)
     {
-        $followers = $user->followers()->get();
+        $followers = $user->followers()->with(
+                            'seenComments', 'designs', 'following',
+                            'followers', 'likedDesigns', 'comments')
+                            ->get();
         return response()->json($followers, 200);
     }
 
@@ -137,10 +141,10 @@ class UsersController extends Controller
     {
         $logged_in_user = $request->user();
         $design->likes()->toggle($logged_in_user->id);
-        $design_likes = $design->likes()->get();
-        foreach ($design_likes as $user ) {
-            $this->userOBJ($user);
-        }
+        $design_likes = $design->likes()->with(
+                    'seenComments', 'designs', 'following',
+                    'followers', 'likedDesigns', 'comments')
+                    ->get();
 
         $liked_Designs =  $logged_in_user->likedDesigns()->get();
         foreach ($liked_Designs as $design ) {

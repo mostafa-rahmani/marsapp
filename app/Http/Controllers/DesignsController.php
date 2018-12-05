@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Design;
 use App\Http\Requests\DesignRequest;
+use function foo\func;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Validation\ValidationException;
 
 class DesignsController extends Controller
 {
@@ -30,18 +32,15 @@ class DesignsController extends Controller
     public function index()
     {
         $designs = Design::where('blocked', '0')->paginate(20);
-        foreach ($designs as $design){
-            $this->DesignOBJ($design);
-        }
         return $designs;
 
     }
 
 
-    public function show(Design $design)
+    public function show(Request $request)
     {
+        $design = Design::find($request->design);
         if (Gate::allows('showDesign', $design)){ // checking blocked design
-            $design = $this->DesignOBJ($design);
             $response = [
                 'base_url' => url()->to('/'),
                 'design' => $design
@@ -91,7 +90,7 @@ class DesignsController extends Controller
             $design = Design::create($data);
             $response = [
                 'message' => 'design successfully created',
-                'design' => $this->DesignOBJ($design)
+                'design' => $design->loadMissing('user', 'comments', 'download_users', 'likes')
             ];
             return response()->json($response, 201);
         }
@@ -113,7 +112,6 @@ class DesignsController extends Controller
             }
             return response()->json(['message' => 'this design does not belong to you'], 403);
 
-//        return response()->json(['message' => 'design not found. please try deleting some other'], 404);
     }
 
 
@@ -137,7 +135,7 @@ class DesignsController extends Controller
 
             $response = [
                 'message' => 'design successfully updated',
-                'design' => $this->DesignOBJ($design)
+                'design' => $design
             ];
             return response()->json($response, 200);
         }
@@ -150,29 +148,26 @@ class DesignsController extends Controller
      * */
     public function followingDesigns(){
         $user = auth()->user();
-        $followings = $user->following;
+        $followings = $user->following()->get();
         $designs = [];
-        foreach ($followings as $user) {
-            if ($user->design){
-                array_push($designs, $this->designOBJ($user->design));
-            }
-        }
+        foreach ($followings as $user)
+            foreach ($user->designs()->get() as $design)
+                array_push($designs, $design);
 
-       if ($designs){
-           return response()->json($this->paginateAnswers($designs, $this->per_page), 200);
-       }
+        if ($designs){
+            return response()->json($this->paginateAnswers($designs , 20), 201);
+        }
        return response()->json($designs, 200);
     }
 
     public function list(Request $request)
     {
+
         $this->validate($request, [
             'ids' => 'Array|required'
         ]);
         $designs = Design::findMany($request->input('ids'));
-        foreach ($designs as $design){
-            $this->DesignOBJ($design);
-        }
-        return response()->json($designs, 201);
+        return response()->json($this->paginateAnswers($designs->toArray() , 20), 201);
+
     }
 }

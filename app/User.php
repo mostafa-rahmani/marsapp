@@ -3,12 +3,10 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Scout\Searchable;
 use Laravel\Passport\HasApiTokens;
-use App\Role;
-use App\User;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int likesCount
@@ -17,6 +15,7 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens, Searchable;
 
+    protected $perPage = 20;
     protected $primaryKey = 'id';
     protected $table = 'users';
 
@@ -29,14 +28,42 @@ class User extends Authenticatable
         'password', 'username', 'profile_image', 'profile_background', 'instagram', 'email', 'bio'
     ];
 
+    protected $appends = array('download_count', 'likesCount', 'instagram_url');
+
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'pivot'
     ];
+
+    public function getDownloadCountAttribute(){
+        $download_count = 0;
+        foreach ($this->designs()->get() as $design){
+            $download_count = $download_count + $design->download_users()->count();
+        }
+        return $this->attributes['download_count'] = $download_count;
+    }
+    public function getLikesCountAttribute(){
+        $likesCount = $this->likedDesigns()->count();
+        return $this->attributes['likesCount'] = $likesCount;
+    }
+
+    public function getProfileBackgroundAttribute($value)
+    {
+        return $value ? url()->to("\\") . trim( Storage::url('public/' . $value), '/') : $value ;
+    }
+
+    public function getInstagramUrlAttribute()
+    {
+        return $this->attributes['instagram_url'] = $this->instagram ? 'http://www.instagram.com/' . $this->instagram : null ;
+    }
+    public function getProfileImageAttribute($value)
+    {
+        return $value ? url()->to("\\") . trim( Storage::url('public/' . $value), '/') : $value ;
+    }
 
     public function getJWTIdentifier()
     {
@@ -102,5 +129,8 @@ class User extends Authenticatable
     public function isBlocked(){
 
         return $this->blocked == "0";
+    }
+    public function seenComments(){
+        return $this->hasMany(Comment::class)->where('seen', '1');
     }
 }

@@ -15,7 +15,7 @@ class CommentsController extends Controller
 
     public function show(Comment $comment)
     {
-        return $this->commentOBJ($comment);
+        return response()->json($comment, 200);
     }
 
     public function update(Request $request, Comment $comment)
@@ -29,7 +29,7 @@ class CommentsController extends Controller
             if ($comment->update($request->only('content', 'seen'))) {
                 $response = [
                     'message' => 'comment was updated successfully ',
-                    'comment' => $this->commentOBJ($comment)
+                    'comment' => $comment
                 ];
                 return response()->json($response, 200);
             }
@@ -42,7 +42,7 @@ class CommentsController extends Controller
     public function delete(Comment $comment)
     {
         if (request()->user()->can('modify', $comment)) {
-            if ($comment->delete()){
+            if ($comment->delete()) {
                 return response()->json(['message' => 'comment was successfully deleted'], 200);
             }
             return response()->json(['message' => 'something went wrong'], 404);
@@ -62,7 +62,7 @@ class CommentsController extends Controller
         if ($comment->save()){
             $response = [
                 'message' => 'comment was successfully created',
-                'comment' => $this->commentOBJ($comment)
+                'comment' => $comment
             ];
             return response()->json($response, 200);
         }
