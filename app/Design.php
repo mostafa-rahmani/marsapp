@@ -5,6 +5,7 @@ namespace App;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 
 /**
@@ -20,6 +21,16 @@ class Design extends Model
     protected $with = ['user', 'comments', 'download_users', 'likes'];
     protected $appends = ['download_count', 'like_count'];
     protected $fillable = ['description', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Order by name ASC
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('created_at', 'Desc');
+        });
+    }
 
     public function getLikeCountAttribute()
     {

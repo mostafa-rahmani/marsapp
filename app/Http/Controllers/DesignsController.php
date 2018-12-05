@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\Http\Requests\DesignRequest;
 use function foo\func;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -31,7 +32,8 @@ class DesignsController extends Controller
 
     public function index()
     {
-        $designs = Design::where('blocked', '0')->paginate(20);
+        $designs = Design::where('blocked', '0')
+                    ->paginate(20);
         return $designs;
 
     }
@@ -166,8 +168,8 @@ class DesignsController extends Controller
         $this->validate($request, [
             'ids' => 'Array|required'
         ]);
-        $designs = Design::findMany($request->input('ids'));
-        return response()->json($this->paginateAnswers($designs->toArray() , 20), 201);
+        $designs = Design::find($request->input('ids'));
+        return response()->json($this->paginateAnswers($designs->toArray(), 20), 201);
 
     }
 }

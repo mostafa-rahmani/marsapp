@@ -147,10 +147,6 @@ class UsersController extends Controller
                     ->get();
 
         $liked_Designs =  $logged_in_user->likedDesigns()->get();
-        foreach ($liked_Designs as $design ) {
-            $this->designOBJ($design);
-        }
-
         $response = [
             'design_likes' => $design_likes,
             'design_this_user_liked' => $liked_Designs
