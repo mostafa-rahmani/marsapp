@@ -111,18 +111,24 @@ class PasswordResetController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
         $passwordReset->delete();
-        return $user;
+        return $user->loadMissing(
+            'seenComments', 'designs', 'following',
+            'followers', 'likedDesigns', 'comments');
     }
 
     public function resetApi(Request $request)
     {
         $user = $this->reset($request);
-        return response()->json($user, 201);
+
+        return response()->json($user->loadMissing(
+            'seenComments', 'designs', 'following',
+            'followers', 'likedDesigns', 'comments'), 201);
     }
 
     public function resetWeb(Request $request)
     {
         $user = $this->reset($request);
+
         session()->flash('changed_pass_msg' , "رمز عبور شما با موفقیت تغییر کرد");
         $data = Setting::first();
         if (!isset($data)){

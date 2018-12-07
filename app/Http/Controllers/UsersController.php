@@ -41,8 +41,8 @@ class UsersController extends Controller
     public function show(Request $request)
     {
         $user = User::with(
-                'seenComments', 'designs', 'following',
-                'followers', 'likedDesigns', 'comments'
+                    'seenComments', 'designs', 'following',
+                    'followers', 'likedDesigns', 'comments'
                 )->find($request->user);
         return response()->json($user, 201);
     }

@@ -27,11 +27,10 @@ class SearchController extends Controller
 
         $user_result = User::search($request->input('query'))->get();
         $design_result = Design::search($request->input('query'))->get();
-        foreach ($user_result as $user){
-            parent::userOBJ($user);
-        }
-        foreach ($design_result as $design){
-            parent::designOBJ($design);
+        foreach ($user_result as $user) {
+            $user->loadMissing(
+                'seenComments', 'designs', 'following',
+                'followers', 'likedDesigns', 'comments');
         }
 
         $users = [];   $designs = [];
@@ -42,7 +41,7 @@ class SearchController extends Controller
             array_push($users, $item);
         }
         $result = array_merge($users, $designs);
-        return response($this->paginateAnswers($result, $this->results_perPage), 201);
+        return response($this->paginateAnswers($result, 20), 201);
     }
 
 

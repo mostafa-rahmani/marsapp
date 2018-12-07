@@ -99,7 +99,6 @@ class AdminController extends Controller
 
     public function showUser(User $user)
     {
-    	$user = parent::userOBJ($user);
     	return view('admin.user', compact('user'));
     }
 

@@ -28,7 +28,7 @@ class DesignRequest extends FormRequest
             case 'POST':
                 return [
                     'description' => 'required|string',
-                    'is_download_allowed' => 'boolean',
+                    'is_download_allowed' => 'boolean|required',
                     'image' => 'required|image'
                 ];
             case 'PATCH':

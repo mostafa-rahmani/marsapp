@@ -30,7 +30,9 @@ class AuthController extends Controller
         if ($user->save()){
             // attach user role to new registered user
             $user->roles()->attach(2);
-            return response()->json(['msg' => 'User created', 'user' => $user], 200);
+            return response()->json(['msg' => 'User created', 'user' => $user->loadMissing(
+                'seenComments', 'designs', 'following',
+                'followers', 'likedDesigns', 'comments')], 200);
         }
         return response()->json(['msg' => 'some thing went wrong try again'], 404);
     }
@@ -54,7 +56,10 @@ class AuthController extends Controller
             $token->expires_at = Carbon::now()->addWeeks(1);
         $token->save();
         return response()->json([
-            "user" => $this->userOBJ($user, true),
+            "user" => $user->loadMissing(
+                'seenComments', 'designs', 'following',
+                'followers', 'likedDesigns', 'comments'
+            ),
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
@@ -136,7 +141,9 @@ class AuthController extends Controller
         $user->password = bcrypt($data["password"]);
         $user->save();
         // a email sed to user
-        return response()->json($user);
+        return response()->json($user->loadMissing(
+            'seenComments', 'designs', 'following',
+            'followers', 'likedDesigns', 'comments'));
     }
 
 }
