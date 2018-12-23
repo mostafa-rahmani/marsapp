@@ -43,13 +43,41 @@ class DesignsController extends Controller
     {
         $design = Design::find($request->design);
         if (Gate::allows('showDesign', $design)){ // checking blocked design
-            $response = [
-                'base_url' => url()->to('/'),
-                'design' => $design
+            $response =  [
+                "status"    =>  "ok",
+                "code"      =>  "200",
+                "message"   => "design returned successfully",
+                "returned"  => "requested design object",
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => $design,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
             ];
             return response()->json($response, 200);
         }
-        return response()->json(['message' => 'either design or user is blocked'], 200);
+        $response =  [
+            "status"    =>  "error",
+            "code"      =>  "403",
+            "message"   => "you can not access this design. it is blocked by the admins.",
+            "returned"  => null,
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 403);
     }
 
     /**
@@ -66,10 +94,42 @@ class DesignsController extends Controller
                 $request->user()->downloads()->attach($design->id);
                 return Response::download($path);
             }
-                return response()->json(['message' => 'cant find the file to download. please try later'], 404);
+                $response =  [
+                    "status"    =>  "error",
+                    "code"      =>  "404",
+                    "message" => "cant find the file to download. please try later",
+                    "returned"  => null,
+                    "data"      => [
+                        "user"      => null,
+                        "users"     => null,
+
+                        "design" => null,
+                        "designs"    => null,
+
+                        "comment"    => null,
+                        "comments"   => null
+                    ]
+                ];
+                return response()->json($response, 404);
 
         } else {
-            return response()->json(['message' => 'this design is not allowed to be downloaded'], 403);
+            $response =  [
+                "status"    =>  "error",
+                "code"      =>  "403",
+                'message' => 'this design is not allowed to be downloaded',
+                "returned"  => null,
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 403);
         }
     }
 
@@ -90,36 +150,102 @@ class DesignsController extends Controller
             $data['is_download_allowed'] = $request->is_download_allowed;
             $data['small_image'] = $this->imageUrl($data['image']);
             $design = Design::create($data);
-            $response = [
+
+            $response =  [
+                "status"    =>  "ok",
+                "code"      =>  "200",
                 'message' => 'design successfully created',
-                'design' => $design->loadMissing('user', 'comments', 'download_users', 'likes')
+                "returned"  => "the created design",
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => $design->loadMissing('user', 'comments', 'download_users', 'likes'),
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
             ];
-            return response()->json($response, 201);
+            return response()->json($response, 200);
         }
-        return response()->json(['message' => 'user is blocked. can not create new design '], 403);
+        $response =  [
+            "status"    =>  "error",
+            "code"      =>  "403",
+            'message' => 'your account were blocked by the admins. you can not create a new design',
+            "returned"  => null,
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 403);
     }
 
 
     /**
      * delete logged in user's design post
-     * @param Request $id
+     * @param Design $design
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function delete(Design $design)
     {
             if (Gate::allows('deleteDesign', $design)){
                 $this->deleteImage($design->image);
                 $result = $design->delete();
-                return response()->json(['message' => 'design was successfully deleted', 'result' => $result], 201);
+                $response =  [
+                    "status"    =>  "ok",
+                    "code"      =>  "204",
+                    'message' => 'design was successfully deleted',
+                    "returned"  => null,
+                    "data"      => [
+                        "user"      => null,
+                        "users"     => null,
+
+                        "design" => null,
+                        "designs"    => null,
+
+                        "comment"    => null,
+                        "comments"   => null
+                    ]
+                ];
+                return response()->json($response, 204);
             }
-            return response()->json(['message' => 'this design does not belong to you'], 403);
+
+            $response =  [
+                "status"    =>  "error",
+                "code"      =>  "403",
+                'message' => 'this design does not belong to you.',
+                "returned"  => null,
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 403);
 
     }
 
 
     /**
-     * updates logged in user's design post
-     * */
+     * updates logged in user's design postp
+     * @param Request $request
+     * @param Design $design
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, Design $design)
     {
         if (Gate::allows('modify', $design)){
@@ -130,18 +256,63 @@ class DesignsController extends Controller
                 if ($result = $this->deleteImage($design->image)){
                     $data = $this->storeImage($image);
                 }else{
-                    return response()->json(['message' => 'updating process was fail. try again', 'result' => $result], 404);
+                    $response =  [
+                        "status"    =>  "error",
+                        "code"      =>  "500",
+                        'message' => 'updating process was fail. try again',
+                        "returned"  => null,
+                        "data"      => [
+                            "user"      => null,
+                            "users"     => null,
+
+                            "design" => null,
+                            "designs"    => null,
+
+                            "comment"    => null,
+                            "comments"   => null
+                        ]
+                    ];
+                    return response()->json($response, 500);
                 }
             }
             $design->update($data);
 
-            $response = [
-                'message' => 'design successfully updated',
-                'design' => $design
+            $response =  [
+                "status"    =>  "ok",
+                "code"      =>  "200",
+                'message' => 'design was updated successfully',
+                "returned"  => "the updated design",
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => $design,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
             ];
             return response()->json($response, 200);
         }
-        return response()->json('you are not allowed to modify this design.', 403);
+
+        $response =  [
+            "status"    =>  "error",
+            "code"      =>  "403",
+            'message' => 'you are not allowed to modify this design',
+            "returned"  => null,
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 403);
     }
 
 
@@ -157,7 +328,7 @@ class DesignsController extends Controller
                 array_push($designs, $design);
 
         if ($designs){
-            return response()->json($this->paginateAnswers($designs , 20), 201);
+            return response()->json($this->paginateAnswers($designs , 20), 200);
         }
        return response()->json($designs, 200);
     }

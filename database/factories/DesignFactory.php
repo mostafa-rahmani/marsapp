@@ -13,12 +13,13 @@ $factory->define(\App\Design::class, function (Faker $faker) {
     });
     $image->save(storage_path('app/public/' . 'small_size' . $filename));
     return [
-        'title' => $faker->title,
+        'description' => $faker->sentence,
         'image' => $filename,
         'small_image' => Storage::url( 'small_size_' . $filename),
         'is_download_allowed' => true,
         'original_width' => '1980',
         'original_height' => '1200',
-        'user_id' => rand(1, 5)
+        'user_id' => factory(\App\User::class)->create()->id,
+        'blocked'   => "0"
     ];
 });

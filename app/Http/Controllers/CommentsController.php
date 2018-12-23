@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Design;
 use Illuminate\Http\Request;
+use App\Http\Resources\Comment as CommentResource;
+
 
 class CommentsController extends Controller
 {
@@ -15,7 +17,23 @@ class CommentsController extends Controller
 
     public function show(Comment $comment)
     {
-        return response()->json($comment, 200);
+        $response =  [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "comment returned successfully",
+            "returned"  => "comment object",
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => $comment,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 200);
     }
 
     public function update(Request $request, Comment $comment)
@@ -27,27 +45,121 @@ class CommentsController extends Controller
             ]);
 
             if ($comment->update($request->only('content', 'seen'))) {
-                $response = [
-                    'message' => 'comment was updated successfully ',
-                    'comment' => $comment
+                $response =  [
+                    "status"    =>  "ok",
+                    "code"      =>  "200",
+                    "message"   => "comment updated successfully",
+                    "returned"  => "the updated comment object",
+                    "data"      => [
+                        "user"      => null,
+                        "users"     => null,
+
+                        "design" => null,
+                        "designs"    => null,
+
+                        "comment"    => $comment,
+                        "comments"   => null
+                    ]
                 ];
                 return response()->json($response, 200);
             }
-            return response()->json(['message' => 'something went wrong please try again'], 500);
+            $response =  [
+                "status"    =>  "error",
+                "code"      =>  "500",
+                "message"   => "something went wrong please try again",
+                "returned"  => null,
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 500);
         }else{
-            return response()->json(['message' => 'This comment does not belong to you'], 500);
+            $response =  [
+                "status"    =>  "error",
+                "code"      =>  "403",
+                "message"   => "this comment does not belongs to you",
+                "returned"  => null,
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 403);
         }
     }
 
     public function delete(Comment $comment)
     {
         if (request()->user()->can('modify', $comment)) {
+
             if ($comment->delete()) {
-                return response()->json(['message' => 'comment was successfully deleted'], 200);
+                $response =  [
+                    "status"    =>  "ok",
+                    "code"      =>  "204",
+                    "message"   => "something went wrong please try again",
+                    "returned"  => null,
+                    "data"      => [
+                        "user"      => null,
+                        "users"     => null,
+
+                        "design" => null,
+                        "designs"    => null,
+
+                        "comment"    => null,
+                        "comments"   => null
+                    ]
+                ];
+                return response()->json($response, 204);
             }
-            return response()->json(['message' => 'something went wrong'], 404);
+            $response =  [
+                "status"    =>  "error",
+                "code"      =>  "500",
+                "message"   => "something went wrong please try again",
+                "returned"  => null,
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 500);
+
         }
-        return response()->json(['message' => 'you are not allowed to delete this comment'], 401);
+        $response =  [
+            "status"    =>  "error",
+            "code"      =>  "403",
+            "message"   => "you are not allowed to delete this comment.",
+            "returned"  => null,
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 403);
     }
 
     public function store(Request $request, Design $design)
@@ -60,13 +172,42 @@ class CommentsController extends Controller
         $comment->design_id = $design->id;
         $comment->content = $request->input('content');
         if ($comment->save()){
-            $response = [
-                'message' => 'comment was successfully created',
-                'comment' => $comment
+            $response =  [
+                "status"    =>  "ok",
+                "code"      =>  "200",
+                "message"   => "comment was created successfully",
+                "returned"  => "the created comment object",
+                "data"      => [
+                    "user"      => null,
+                    "users"     => null,
+
+                    "design" => null,
+                    "designs"    => null,
+
+                    "comment"    => $comment->loadMissing("user"),
+                    "comments"   => null
+                ]
             ];
             return response()->json($response, 200);
         }
-        return response()->json(['message' => 'something went wrong please try again'], 404);
+
+        $response =  [
+            "status"    =>  "error",
+            "code"      =>  "500",
+            "message"   => "something went wrong please try again",
+            "returned"  => null,
+            "data"      => [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 500);
 
     }
 }

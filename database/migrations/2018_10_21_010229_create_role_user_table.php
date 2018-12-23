@@ -25,8 +25,8 @@ class CreateRoleUserTable extends Migration
             $table->primary(['role_id', 'user_id']);
         });
 
-        $user = User::where("username", "mostafa")->first();
-        $user->roles()->attach(1);
+//        $user = User::where("username", "mostafa")->first();
+//        $user->roles()->attach(1);
     }
 
     /**

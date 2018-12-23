@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * @property mixed is_download_allowed
  * @property mixed blocked
+ * @property mixed image
  */
 class Design extends Model
 {

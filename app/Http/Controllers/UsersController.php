@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Design;
+use App\Helpers\helpers;
+use App\Helpers\marsHelper;
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
 use App\User;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use App\Http\Resources\User as UserResource;
+use Symfony\Component\Console\Helper\Helper;
 
 class UsersController extends Controller
 {
@@ -33,9 +36,25 @@ class UsersController extends Controller
     public function index()
     {
         $users = User::with(
-                'seenComments', 'designs', 'following',
-                        'followers', 'likedDesigns', 'comments')->get();
-        return $users;
+            'seenComments', 'designs', 'following',
+            'followers', 'likedDesigns', 'comments')->get();
+
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "all users returned successfully",
+            "data"      => [
+                "user"      => null,
+                "users"     => $users->toArray(),
+
+                "design"    => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response,200);
     }
 
     public function show(Request $request)
@@ -44,7 +63,25 @@ class UsersController extends Controller
                     'seenComments', 'designs', 'following',
                     'followers', 'likedDesigns', 'comments'
                 )->find($request->user);
-        return response()->json($user, 201);
+
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "user returned successfully",
+            "returned"  => "the requested user object",
+            "data"      => [
+                "user"      => $user,
+                "users"     => null,
+
+                "design"    => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -56,12 +93,11 @@ class UsersController extends Controller
             'username' => 'String|unique:users',
             'instagram' => 'String',
             'bio' => 'String',
-            'email' => 'email',
             'profile_background' => 'image',
             'profile_image' => 'image'
         ]);
 
-        $data = $request->only('username', 'instagram', 'email', 'bio' );
+        $data = $request->only('username', 'instagram', 'bio' );
         if ($instagram = $request->instagram){
             $data['instagram'] =  $instagram;
         }
@@ -69,7 +105,7 @@ class UsersController extends Controller
         if ($image = $request->file('profile_image')){
             if ($data['profile_image'] = $this->storeProfile($image, 'profile_image')){
                 if ($old_filename = $user->profile_image){
-                    $this->deleteImage ($old_filename , true); // name has already contained prefix
+                    $this->deleteImage ($old_filename , true); // name is contained prefix
                 }
             }
         }
@@ -81,7 +117,23 @@ class UsersController extends Controller
             }
         }
         $user->update($data);
-        return response()->json($user->loadMissing('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments'), 200);
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "user updated successfully",
+            "returned"  => "current logged in user",
+            "data"      => [
+                "user"      => $user->loadMissing('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments')->toArray(),
+                "users"     => null,
+
+                "design"    => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 200);
     }
 
     /**
@@ -94,20 +146,25 @@ class UsersController extends Controller
     {
             $logged_in_user = $request->user();
             if ($logged_in_user->id == $user->id){// in case user wants to follow/unfollow himself
-                return response()->json(['message' => 'you can not follow your acount', ], 403);
+                return response()->json(['message' => 'you can not follow your account', ], 403);
             }
             $logged_in_user->following()->toggle($user->id);
 
-
-            $followings = $logged_in_user->following()
-                                    ->with('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments')
-                                    ->get();
-            $followers = $logged_in_user->followers()
-                                        ->with('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments')
-                                        ->get();
             $response = [
-                'followers' => $followers,
-                'loged_in_user_followings' => $followings
+                "status"    =>  "ok",
+                "code"      =>  "200",
+                "message"   => "you followed ". $user->username ." successfully ",
+                "returned"  => "current logged in user",
+                "data"      => [
+                    "user"      => $logged_in_user->loadMissing('seenComments', 'designs', 'following', 'followers', 'likedDesigns', 'comments'),
+                    "users"     => null,
+
+                    "design"    => null,
+                    "designs"    => null,
+
+                    "comment"    => null,
+                    "comments"   => null
+                ]
             ];
             return response()->json($response, 201);
 
@@ -125,7 +182,23 @@ class UsersController extends Controller
                             'seenComments', 'designs', 'following',
                                     'followers', 'likedDesigns', 'comments')
                             ->get();
-        return response()->json($followings, 200);
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "following users returned successfully",
+            "returned"  => "following user objects of the given user",
+            "data"      => [
+                "user"      => null,
+                "users"     => $followings,
+
+                "design"    => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+        return response()->json($response, 200);
     }
 
     public function followers(User $user)
@@ -134,22 +207,49 @@ class UsersController extends Controller
                             'seenComments', 'designs', 'following',
                             'followers', 'likedDesigns', 'comments')
                             ->get();
-        return response()->json($followers, 200);
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "follow users returned successfully",
+            "returned"  => "the followers of the given user",
+            "data"      => [
+                "user"      => null,
+                "users"     => $followers,
+
+                "design"    => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
+        ];
+
+        return response()->json($response, 200);
     }
 
     public function like(Request $request, Design $design)
     {
         $logged_in_user = $request->user();
         $design->likes()->toggle($logged_in_user->id);
-        $design_likes = $design->likes()->with(
+
+        $response = [
+            "status"    =>  "ok",
+            "code"      =>  "200",
+            "message"   => "you liked the design successfully",
+            "returned"  => "current logged in user and the current liked design",
+            "data"      => [
+                "user"      => $logged_in_user->with(
                     'seenComments', 'designs', 'following',
                     'followers', 'likedDesigns', 'comments')
-                    ->get();
+                    ->get(),
+                "users"     => null,
 
-        $liked_Designs =  $logged_in_user->likedDesigns()->get();
-        $response = [
-            'design_likes' => $design_likes,
-            'design_this_user_liked' => $liked_Designs
+                "design" => $design,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
         ];
         return response()->json($response, 200);
     }

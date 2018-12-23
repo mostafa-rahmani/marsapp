@@ -12,11 +12,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
 //         $this->call(UsersTableSeeder::class);
-        DB::table('users')->truncate();
-        DB::table('designs')->truncate();
-        DB::table('comments')->truncate();
+//        DB::table('users')->truncate();
+//        DB::table('designs')->truncate();
+//        DB::table('comments')->truncate();
         factory(App\User::class, 5)->create();
-        factory(App\Design::class, 5)->create();
-        factory(App\Comment::class, 5)->create();
+//        factory(App\Design::class, 5)->create();
+//        factory(App\Comment::class, 5)->create();
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 Route::group([ 'prefix' => 'users'],function (){
 
     Route::get('/', 'UsersController@index');
@@ -14,13 +16,15 @@ Route::group([ 'prefix' => 'users'],function (){
 });
 
 Route::group(['prefix' => 'auth'], function (){
+
     Route::group([
         'namespace' => 'Auth',
         'prefix' => 'password'
     ], function () {
         Route::post('create', 'PasswordResetController@create');
         Route::post('reset', 'PasswordResetController@resetApi');
-    });
+
+});
 
     Route::post('/checkpass', 'AuthController@checkPassword');
     Route::patch('/changepass', 'AuthController@changePassword');
