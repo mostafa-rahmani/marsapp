@@ -9,9 +9,9 @@ Route::group([ 'prefix' => 'users'],function (){
     Route::post('/update', 'UsersController@update');
     Route::delete('/{user}', 'UsersController@delete');
     Route::get('/follow/{user}', 'UsersController@follow');
+    Route::get('/unfollow/{user}', 'UsersController@unfollow');
     Route::get('/followers/{user}', 'UsersController@followers');
     Route::get('/followings/{user}', 'UsersController@followings');
-    Route::get('/likes/{design}', 'UsersController@like');
 
 });
 
@@ -44,6 +44,8 @@ Route::group(['prefix' => 'designs'], function(){
     Route::post('/create', 'DesignsController@store');
     Route::post('/{design}/update', 'DesignsController@update');
     Route::get('/following/get', 'DesignsController@followingDesigns');
+    Route::get('/like/{design}', 'DesignsController@likeDesign');
+    Route::get('/dislike/{design}', 'DesignsController@dislikeDesign');
 
 });
 
@@ -57,5 +59,3 @@ Route::group(['prefix' => 'comments'], function (){
 });
 
 Route::post('/search', 'SearchController@search');
-
-

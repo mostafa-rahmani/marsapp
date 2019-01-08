@@ -23,7 +23,9 @@ class DesignPolicy
 
     public function modify(User $user, Design $design)
     {
+//        dd($user->id == $design->user_id);
         return $user->id == $design->user_id;
+
     }
 
     public function showDesign(User $user, Design $design)

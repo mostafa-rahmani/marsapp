@@ -27,12 +27,13 @@ class SearchController extends Controller
 
         $user_result = User::search($request->input('query'))->get();
         $design_result = Design::search($request->input('query'))->get();
+
         foreach ($user_result as $user) {
             $user->loadMissing(
                 'seenComments', 'designs', 'following',
                 'followers', 'likedDesigns', 'comments');
         }
-
+          
         $users = [];   $designs = [];
         foreach ($user_result as $item){
             array_push($designs, $item);

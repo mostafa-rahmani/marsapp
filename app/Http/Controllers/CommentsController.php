@@ -175,7 +175,7 @@ class CommentsController extends Controller
             $response =  [
                 "status"    =>  "ok",
                 "code"      =>  "200",
-                "message"   => "comment was created successfully",
+                "message"   => "comment created successfully",
                 "returned"  => "the created comment object",
                 "data"      => [
                     "user"      => null,

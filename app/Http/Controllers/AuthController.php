@@ -25,16 +25,35 @@ class AuthController extends Controller
         $user = new User([
             'username' => $request->input('username'),
             'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password'))
+            'password' => bcrypt($request->input('password')),
+            'profile_image' => null,
+            'profile_background'    => null,
+            'blocked'      => null,
+            'instagram'     => null,
+            'bio'   => null
         ]);
         if ($user->save()){
             // attach user role to new registered user
             $user->roles()->attach(2);
-            return response()->json(['msg' => 'User created', 'user' => $user->loadMissing(
-                'seenComments', 'designs', 'following',
-                'followers', 'likedDesigns', 'comments')], 200);
+            $response = [
+                "status" => "ok",
+                "code"  => "200",
+                "message"   => "user created successfully",
+                "returned"  => "the created user",
+                "data"    => [
+                    "user"    => $user->loadMissing(
+                      'seenComments', 'designs', 'following',
+                      'followers', 'likedDesigns', 'comments'),
+                    "users" => null,
+                    "design" => null,
+                    "designs" => null,
+                    "comment" => null,
+                    "comments" => null,
+                ]
+            ];
+            return response()->json($response, 200);
         }
-        return response()->json(['msg' => 'some thing went wrong try again'], 404);
+        return response()->json(['msg' => 'some thing went wrong try again'], 500);
     }
 
 

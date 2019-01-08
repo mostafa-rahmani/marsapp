@@ -4,8 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
 class Comment extends Model
 {
+    use Searchable;
     protected $fillable = ['content', 'seen', 'design_id', 'user_id'];
     protected $with = ['user'];
 
@@ -23,5 +26,16 @@ class Comment extends Model
     }
     public function user(){
         return $this->belongsTo(User::class);
+    }
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    public function toSearchableArray()
+    {
+        $array = $this->only('content');
+
+        return $array;
     }
 }

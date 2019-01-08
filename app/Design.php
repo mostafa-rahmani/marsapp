@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property mixed is_download_allowed
  * @property mixed blocked
  * @property mixed image
+ * @property mixed user_id
  */
 class Design extends Model
 {
@@ -19,6 +20,7 @@ class Design extends Model
     protected $primaryKey = 'id';
     protected $perPage = 1;
     protected $table = 'designs';
+    protected $hidden = ['pivot'];
     protected $with = ['user', 'comments', 'download_users', 'likes'];
     protected $appends = ['download_count', 'like_count'];
     protected $fillable = ['description', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
@@ -26,7 +28,6 @@ class Design extends Model
     protected static function boot()
     {
         parent::boot();
-
         // Order by name ASC
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('created_at', 'Desc');
@@ -35,7 +36,7 @@ class Design extends Model
 
     public function getLikeCountAttribute()
     {
-        return $this->attributes['like_count'] = $this->download_users()->count();
+        return $this->attributes['like_count'] = $this->likes()->count();
     }
     public function getDownloadCountAttribute()
     {
@@ -73,11 +74,8 @@ class Design extends Model
 
     public function toSearchableArray()
     {
-        return [
-          'id' => $this->id,
-          'username' => $this->username,
-          'email' => $this->email,
-          'bio' => $this->bio
-        ];
+        $array = $this->only('description');
+        $array[$this->getKeyName()] = $this->getKey();
+        return $array;
     }
 }

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property mixed $attributes
  * @property mixed $comments
  * @property mixed $designs
+ * @property int $id
  */
 class User extends Authenticatable
 {
@@ -61,7 +62,6 @@ class User extends Authenticatable
     public function getDownloadCountAttribute(){
 
         $download_count = 0;
-
         foreach ($this->designs()->get() as $design)
             $download_count = $download_count + $design->download_users()->count();
 
@@ -88,20 +88,8 @@ class User extends Authenticatable
     public function getProfileImageUrlAttribute()
     {
         $image = $this->attributes['profile_image'];
-        return $image ? url()->to("\\") . trim( Storage::url('public/' . $image), '/') : $image ;
+        return $image ? image_url($image, 'pi') : $image ;
     }
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-
-
     // users that follow this user
     public function followers() {
         return $this->belongsToMany(User::class, 'follows',
@@ -159,4 +147,15 @@ class User extends Authenticatable
     public function seenComments(){
         return $this->hasMany(Comment::class)->where('seen', '1');
     }
+    public function searchableAs()
+    {
+        return 'User_index';
+    }
+
+   public function toSearchableArray()
+   {
+       $array = $this->only('bio', 'name', 'email');
+       $array[$this->getKeyName()] = $this->getKey();
+       return $array;
+   }
 }
