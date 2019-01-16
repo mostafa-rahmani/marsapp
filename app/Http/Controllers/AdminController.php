@@ -190,17 +190,17 @@ class AdminController extends Controller
             session()->flash('message', 'فایل ارسالی باید یک فایل apk باشد.');
             return redirect()->back();
         }
-        if($path = storage_path('app/appfile.apk')){
-            Storage::disk('app')->delete('appfile.apk');
+        if(file_exists(storage_path('app/mars.apk'))){
+            Storage::delete('mars.apk');
         }
-        $file->storeAs('/','appfile.' . $extension , 'app' );
+        $file->storeAs('/','mars.' . $extension , 'app' );
         session()->flash('message', 'قایل با موفقیت ذخیره شد.');
         return redirect()->back();
     }
 
     public function download()
     {
-        if($path = storage_path('app/appfile.apk')){
+        if(file_exists($path = storage_path('app/mars.apk'))){
             return Response::download($path);
         }
         session()->flash('message', 'فایل در حال حاضر موجود نیست. لطفا مدتی منتظر بمانید.');
