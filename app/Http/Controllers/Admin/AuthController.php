@@ -26,14 +26,17 @@ class AuthController extends Controller
     public function adminLogin(Request $request)
     {
         if ($request->method() === 'POST'){
-
-            if(!User::where('email' , $request->email)->first()->isManager()){
-                session()->flash('message', 'شما اجازه ورود ندارید. لطفا از اپلیکیشن برای ورود استفاده کنید');
+            if ($user = User::where('email', $request->email)->first()){
+                if(!$user->isManager()){
+                    session()->flash('message', 'شما اجازه ورود ندارید. لطفا از اپلیکیشن برای ورود استفاده کنید');
+                    return redirect('/');
+                }
+                if (Auth::attempt($request->only('email', 'password'), $request->input('remember_me'))) {
+                    return redirect('/admin');
+                }
                 return redirect('/');
             }
-            if (Auth::attempt($request->only('email', 'password'), $request->input('remember_me'))) {
-                return redirect('/admin');
-            }
+            session()->flash('message', 'حساب کاربری پیدا نشد.');
             return redirect('/');
         }
         return view('admin.auth.login');

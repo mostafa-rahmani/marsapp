@@ -11716,16 +11716,14 @@ span {
   background: linear-gradient(to left, #00ffdf 0%, #5a00ff 100%);
   border-radius: 50px;
   outline: none;
-  margin-top: 20px;
-  display: block;
-  max-width: 200px;
+  margin-top: 30px;
   padding: 10px 20px;
 }
 
 .download-btn:hover {
   text-decoration: none;
-  -webkit-box-shadow: 0px 0px 1px 0px #eee;
-  box-shadow: 0px 0px 1px 0px #eee;
+  -webkit-box-shadow: 0px 0px 5px 0px #eee;
+  box-shadow: 0px 0px 5px 0px #eee;
   border: none;
 }
 
@@ -11773,5 +11771,13 @@ html {
 
 #admin-content .breadcrumb {
   background-color: inherit;
+}
+
+#login_page_wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background: url("/img/background3.jpeg") no-repeat center center;
+  background-size: cover;
+  padding: 0 60px;
 }
 

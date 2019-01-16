@@ -3,9 +3,10 @@
 namespace Tests\Unit;
 
 use App\Design;
+use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
+
 
 class DesignTest extends TestCase
 {
@@ -24,35 +25,45 @@ class DesignTest extends TestCase
         $this->actingAs($this->authUser, 'api');
     }
 
+    /** @test */
+    public function client_can_request_for_designs_with_pagination_response(){
+        // given we have some designs
+        $designs = $this->designs;
+        // when we request for all designs
+        $response = $this->json('get', '/api/designs');
+        // then we receive paginated designs in response
+        $response->assertStatus(200);
+    }
 
-     /** @test */
-     public function an_authenticated_user_can_like_a_design()
-     {
-         // given we have an authenticated user
-         $user = $this->authUser;
-         $design = $this->designs[1];
-         // when the user likes a design
-         $response = $this->json("get", "/api/designs/" . $design->id . "/like");
+    /** @test */
+    public function an_authenticated_user_can_like_a_design()
+    {
+        // given we have an authenticated user
+        $user = $this->authUser;
+        $design = $this->designs[1];
+        // when the user likes a design
+        $response = $this->json("get", "/api/designs/like/" . $design->id );
 
-         //then we wants those designs in the user liked design
-         $this->assertArraySubset($design->toArray(), $user->likedDesigns()->get()->toArray());
-         $response->assertStatus(200)
-             ->assertJson([
-             "status" => "ok",
-             "code" => "200",
-             "message" => "you successfully liked design " . $design->id ,
-             "returned" => "liked design and authenticated user",
-             "data"  => [
-                 "user"  => $user->toArray(),
-                 "users" => null,
-                 "design"    => $design->toArray(),
-                 "designs"   => null,
-                 "comment" => null,
-                 "comments"  => null
-             ]
-         ]);
+        //then we wants those designs in the user liked design
+        $response->assertStatus(200)
+            ->assertJson([
+                "status"    => "ok",
+                "code" => "200",
+                'data' => [
+                    'user'      =>  [
+                        'liked_designs'     => User::find($user->id)->likedDesigns()->get()->toArray()
+                    ],
+                    'users'     => null,
+                    'design'    => [
+                        "likes"       => Design::find($design->id)->likes()->get()->toArray()
+                    ],
+                    'designs'   => null,
+                    'comment'   => null,
+                    'comments'  => null
+                ]
+            ]);
 
-     }
+    }
 
     /** @test */
     public function an_authenticated_user_can_dislike_a_design()
@@ -61,130 +72,115 @@ class DesignTest extends TestCase
         $user = $this->authUser;
         $design = $this->designs[0];
         // when authenticated user dislikes a design
-        $response = $this->json("get", "/api/designs/". $design->id ."/dislike");
+        $response = $this->json("get", "/api/designs/dislike/". $design->id);
         // then we must receive the liked design and the user object
         $response->assertStatus(200)
             ->assertJson([
-                "status" => "ok",
+                "status"    => "ok",
                 "code" => "200",
-                "message" => "you successfully disliked design " . $design->id ,
-                "returned" => "disliked design and authenticated user",
-                "data" => [
-                    "user" => $user,
-                    "design" => $design
+                'data' => [
+                    'user'      =>  [
+                        'liked_designs'     => User::find($user->id)->likedDesigns()->get()->toArray()
+                    ],
+                    'users'     => null,
+                    'design'    => [
+                        "likes"       => Design::find($design->id)->likes()->get()->toArray()
+                    ],
+                    'designs'   => null,
+                    'comment'   => null,
+                    'comments'  => null
                 ]
             ]);
     }
 
     /** @test */
-     public function client_can_request_for_a_design_by_id(){
-         // given we have a design with the id of 21
-         $design = factory(Design::class)->create(["id" => 21]);
+    public function client_can_request_for_a_design_by_id_and_can_not_request_for_blocked_one(){
+        // when we request for a design
+        $design = $this->designs[3];
+        $response = $this->json("get", "/api/designs/" . $design->id );
+        // then we must receive the design
+        $response->assertJson([
+            "status"    => "ok",
+            "code" => "200",
+            "message"   => "design returned successfully",
+            "returned"  => "requested design object",
+            "data" => [
+                "design" => [
+                    "id" => $design->id
+                ]
+            ]
+        ]);
+        // now if we block this design
+        $design->blocked = true;
+        $design->save();
+        // then we must not be able to receive it in response
+        $response = $this->json("get", "/api/designs/" . $design->id );
+        $response->assertStatus(403)->assertJson([
+            "status"    => "error",
+            "code" => "403",
+            "message"   => "you can not access this design. it is blocked by the admins.",
+            "returned"  => null,
+            "data" => [
+                "design" => null
+            ]
+        ]);
+        // when we send a wrong id
+        $response = $this->json('get', '/api/designs/4322');
+        // then we must receive an error
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'code'  =>  '404',
+                'message'   => 'design not found',
+                'returned'  => null,
+                'data'      => [
+                    'user'  => null,
+                    'users' => null,
+                    'design'    => null,
+                    'designs'   => null,
+                    'comment'    => null,
+                    'comments'   => null
+                ]
+            ]);
+    }
 
-         // when we request for the design with the id of 21
-         $response = $this->json("get", "/api/designs/21" );
-
-         // then we must receive the design
-         $response->assertJson([
-             "status"    => "ok",
-             "code" => "200",
-             "message"   => "design returned successfully",
-             "returned"  => "requested design object",
-             "data" => [
-                 "design" => [
-                     "id" => 21
-                 ]
-             ]
-         ]);
-     }
-
-     /** @test */
-     public function client_cannot_receive_the_blocked_design_by_id(){
-         // given we have a design with the id of 21
-         $design = factory(Design::class)->create(["id" => 21, "blocked" => 1]);
-
-         // when we request for the design with the id of 21
-         $response = $this->json("get", "/api/designs/21" );
-
-         // then we must receive the design
-         $response->assertStatus(403)->assertJson([
-             "status"    => "error",
-             "code" => "403",
-             "message"   => "you can not access this design. it is blocked by the admins.",
-             "returned"  => null,
-             "data" => [
-                 "design" => null
-             ]
-         ]);
-     }
-
-     /** @test
-      * download method
-      */
-
-     /** @test */
-     public function logged_in_user_can_receive_following_users_designs(){
-         // given we have an authenticated user that follows multiple other users
-         $users = factory(\App\User::class, 5)->create();
-         $designs = [];
-         $index = 51;
-         foreach ($users as $user ){
-             $design = factory(Design::class, 5)->create([
-                 "user_id" => $user->id
-             ]);
-             array_push($designs, $design);
-             $this->json("get", "/api/users/follow/" . $user->id);
-         }
-         //when we request for following designs
-         $response = $this->json("get", "/api/designs/following/get");
-         // then we receive followed users designs
-         $response->assertStatus(200)->assertJson([
-             "data" => []
-         ]);
-     }
+    /** @test */
+    public function logged_in_user_can_receive_following_users_designs(){
+        // given we have an authenticated user that follows multiple other users
+        $users = factory(User::class, 2)->create();
+        foreach ($users as $user ){
+            factory(Design::class, 2)->create([
+                "user_id" => $user->id
+            ]);
+            $this->json("get", "/api/users/follow/" . $user->id);
+        }
+        //when we request for following designs
+        $response = $this->json("get", "/api/designs/following/get");
+        // then we receive followed users designs
+        $response->assertStatus(200)->assertJson([
+            'current_page' => '1',
+            'data' => array_merge(
+                $users[0]->designs()->get()->toArray(),
+                $users[1]->designs()->get()->toArray()
+            )
+        ]);
+    }
 
     /** @test */
     public function client_can_request_a_list_of_designs_using_ids()
     {
         // given we have 4 design in our database
-        $designs = factory(Design::class, 3)->create();
-
+        $designs = $this->designs;
         // when we requested for designs using 3 ids
         $response = $this->json("post", "/api/designs/list", [
-           "ids" => [
-               $designs[0]->id, $designs[1]->id, $designs[2]->id
-           ]
+            "ids" => [
+                $designs[0]->id, $designs[1]->id
+            ]
         ]);
         // then we must receive a list of 3 designs
         $response->assertStatus(200);
-        // dd($response->json());
-
         $response->assertJson( [
-          "current_page" => 1
+            'current_page' => "1"
         ]);
-        // $response->assertJson([
-        //
-        //
-        //       "id" => $designs[0]->id,
-        //       "description" => $designs[0]->description,
-        //       "image" => $designs[0]->image,
-        //       "small_image" => $designs[0]->small_image,
-        //       "original_width" =>  $designs[0]->original_width,
-        //       "original_height" =>  $designs[0]->original_height,
-        //       "is_download_allowed" =>  $designs[0]->is_download_allowed,
-        //       "blocked" =>  $designs[0]->blocked,
-        //       "user_id" => $designs[0]->user_id,
-        //       "download_count" =>  $designs[0]->download_count,
-        //       "like_count" => $designs[0]->like_count,
-        //       "user" => $designs[0]->user(),
-        //       "comments" =>  $designs[0]->comments,
-        //       "download_users" =>  $designs[0]->download_users,
-        //       "likes" => $designs[0]->likes,
-        //
-        //   ]
-        // );
-
-
-
     }
 }

@@ -14,9 +14,13 @@ use Intervention\Image\Facades\Image;
  *@params string, boolean
  * */
 if (! function_exists('delete_image')) {
-    function delete_image($imageName , $profile = false)
+    function delete_image($imageName , $profile = false, $adminAbout = false)
     {
         if ($profile && file_exists(storage_path('app/public/profile_image_' . $imageName))) {
+            $result = Storage::disk('public')->delete($imageName);
+            return $result ? true : false;
+        }
+        if ($adminAbout && file_exists(storage_path('app/public/' . $imageName)) ){
             $result = Storage::disk('public')->delete($imageName);
             return $result ? true : false;
         }

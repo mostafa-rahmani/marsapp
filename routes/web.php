@@ -14,7 +14,7 @@ Route::get('find/{token}', 'auth\PasswordResetController@find');
 Route::post('reset', 'auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
 Route::get('/about', 'aboutController@about')->name('about');
-
+Route::get('/download', 'AdminController@download');
 Route::group(['prefix' => 'auth'], function (){
     Route::get('/login', 'Admin\AuthController@adminLogin')->name('admin_login');
     Route::post('/login', 'Admin\AuthController@adminLogin');
@@ -28,6 +28,7 @@ Route::group(['prefix' => 'auth'], function (){
 Route::group(['prefix'=> 'admin'], function(){
     Route::get('/', 'AdminController@admin');
 	Route::get('/settings', 'AdminController@adminSettings');
+	Route::post('/settings/apk', 'AdminController@apkUpload');
 	Route::post('/settings' , 'AdminController@updateSettings');
 	Route::get('/users', 'AdminController@allUsers');
 	Route::get('/users/{user}', 'AdminController@showUser');

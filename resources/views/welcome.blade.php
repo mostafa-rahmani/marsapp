@@ -24,15 +24,15 @@
             <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
         @endif
        <div class="row py-4">
-           <div class="col-lg-3 text-center"></div>
-           <div class="col-lg-6 text-center d-flex flex-column">
-               <div class="my-5">
+           <div class="col-lg-4 text-center"></div>
+           <div class="col-lg-4 text-center d-flex flex-column">
+               <div class="my-0">
                    <h1 class="text-center my-5">{{ $data->landing_title }}</h1>
                    <p class="text-center">{{ $data->landing_description }}</p>
-                   <a href="http://{{ $data->app_download_url }}" class="px-5 mx-auto download-btn text-white">دانلود اپ اندروید</a>
                </div>
+               <a href="/download" class="px-5 mx-auto download-btn text-white">دانلود مستقیم</a>
            </div>
-           <div class="col-lg-3 text-center"></div>
+           <div class="col-lg-4 text-center"></div>
        </div>
     </div>
 @endsection

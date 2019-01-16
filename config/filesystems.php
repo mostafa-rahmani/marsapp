@@ -43,7 +43,10 @@ return [
 
 
     'disks' => [
-
+        'app'   =>  [
+            'driver'  =>  'local',
+            'root'    =>   storage_path('app')
+        ],
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/full_size'),

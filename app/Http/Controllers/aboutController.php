@@ -42,7 +42,7 @@ class aboutController extends Controller
         }
         if ($image = $request->file('about_second_img')){
             $filename = 'about_second_img_';
-            $this->deleteImage($settings->about_second_img);
+            $this->imageDelete($settings->about_second_img);
             $data['about_second_img'] = $this->saveImage($image, $filename);
         }
         if (Setting::first()->update($data)){
@@ -67,5 +67,6 @@ class aboutController extends Controller
         if (file_exists(storage_path('app/public/' . $filename))){
             return Storage::delete('public/' . $filename);
         }
+        return true;
     }
 }

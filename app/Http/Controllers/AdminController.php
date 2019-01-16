@@ -7,6 +7,9 @@ use App\Setting;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 
 class AdminController extends Controller
@@ -166,6 +169,42 @@ class AdminController extends Controller
         session()->flash('message', 'بروزرسانی تنظیمات موفق نبود لطفا دوباره تلاش کنید.');
         return redirect()->back();
 
+    }
+
+    public function apkUpload(Request $request)
+    {
+        ini_set('memory_limit','10240M');
+        try {
+            $this->validate($request, [
+                'apk'   =>  'Required|File'
+            ]);
+        } catch (ValidationException $e) {
+            session()->flash('message', 'فایل ارسالی باید یک فایل apk باشد. و نباید خالی فرستاده شود.');
+            return redirect()->back();
+        }
+
+        $file = $request->file('apk');
+        $filname = $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        if ($extension !== 'apk'){
+            session()->flash('message', 'فایل ارسالی باید یک فایل apk باشد.');
+            return redirect()->back();
+        }
+        if($path = storage_path('app/appfile.apk')){
+            Storage::disk('app')->delete('appfile.apk');
+        }
+        $file->storeAs('/','appfile.' . $extension , 'app' );
+        session()->flash('message', 'قایل با موفقیت ذخیره شد.');
+        return redirect()->back();
+    }
+
+    public function download()
+    {
+        if($path = storage_path('app/appfile.apk')){
+            return Response::download($path);
+        }
+        session()->flash('message', 'فایل در حال حاضر موجود نیست. لطفا مدتی منتظر بمانید.');
+        return redirect()->back();
     }
 
     public function footerLinks(Request $request)

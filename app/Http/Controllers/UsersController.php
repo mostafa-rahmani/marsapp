@@ -105,7 +105,7 @@ class UsersController extends Controller
             "message"   => "user updated successfully",
             "returned"  => "current logged in user",
             "data"      => [
-                "user"      => new UserResource($user),
+                "user"      => new UserResource(User::find($request->user()->id)),
                 "users"     => null,
 
                 "design"    => null,

@@ -30,24 +30,18 @@ class UserTest extends TestCase
     {
         $user = factory(User::class)->create();
         $response = $this->json('get', '/api/users/' . $user->id )->assertStatus(200);
-        $user = [
-            "id"    => $user->id,
-            "username" => $user->username,
-            "email" => $user->email,
-            "bio"   => $user->bio,
-            "blocked"   => $user->blocked,
-            "instagram" => $user->instagram,
-            "instagram_url" => $user->instagram ? 'https://www.instagram.com/' . $this->authUser->instagram  : null,
-            "profile_image" => $user->profile_image ? image_url($this->authUser->profile_image, 'pi') : null,
-            "profile_background"  => $user->profile_background ? image_url($this->authUser->profile_background, 'pg') : null,
-        ];
+
         $responseData = [
             "status"    =>  "ok",
             "code"      =>  "200",
             "message"   => "user returned successfully",
             "returned"  => "the requested user object",
             "data"      => [
-                "user"      => $user,
+                "user"      => [
+                    "id"        => $user->id,
+                    "followers"    =>  $user->followers()->get()->toArray(),
+                    "comments"      => $user->comments()->get()->toArray()
+                ],
                 "users"     => null,
 
                 "design"    => null,
@@ -65,26 +59,33 @@ class UserTest extends TestCase
     public function a_user_can_update_his_own_personal_data()
     {
         $user = factory(User::class)->create();
-        $this->actingAs($user, 'api');
+        $bu_profile_image = $user->profile_image;// user profile image before update
+        $bu_profile_background = $user->profile_background;// user profile background before update
 
+        $this->actingAs($user, 'api');
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         $response = $this->json('POST', '/api/users/update', [
             'profile_image' => $file,
             'profile_background' => $file,
             "username" => "chloe.grace",
-            "bio"      => "this my updated bio",
+            "bio"      => "this is my updated bio",
             "instagram" => "rhmostafa"
         ]);
 
-        //? check if the files do exist
-        Storage::disk('public')->assertExists(  $user->profile_image);
-        Storage::disk('public')->assertExists( $user->profile_background);
-        //? delete the files from disk
-        Storage::disk('local')->delete([
-            'public/' . $user->profile_background,
-            'public/' . $user->profile_image
-        ]);
+        //? Assert the old files do not exist
+        Storage::disk('public')->assertMissing( $bu_profile_background );
+        Storage::disk('public')->assertMissing( $bu_profile_image );
+
+        //? Assert the new files do exist
+        Storage::disk('public')->assertExists(  $user->profile_image );
+        Storage::disk('public')->assertExists( $user->profile_background );
+
+//        //? delete the files from disk
+//        Storage::disk('local')->delete([
+//            'public/' . $user->profile_background,
+//            'public/' . $user->profile_image
+//        ]);
 
         $responseData = [
             "status"    =>  "ok",
@@ -92,9 +93,11 @@ class UserTest extends TestCase
             "message"   => "user updated successfully",
             "returned"  => "current logged in user",
             "data"      => [
-//                "user" =>  $user->loadMissing(
-//                    'seenComments', 'designs', 'following',
-//                    'followers', 'likedDesigns', 'comments')->toArray(),
+                "user" =>  [
+                    "username"  => 'chloe.grace',
+                    'bio'       => 'this is my updated bio',
+                    "instagram" => "rhmostafa"
+                ],
                 "users"     => null,
 
                 "design"    => null,
@@ -110,16 +113,57 @@ class UserTest extends TestCase
     /** @test */
     public function a_logged_in_user_can_follow_another_user()
     {
-        // when we follows bunch of users
+        // auth user can follow other users
         foreach ($this->users as $user){
             $response = $this->json('get', '/api/users/follow/' . $user->id);
+            $response->assertStatus(200)
+                ->assertJson([
+                    'status'    => 'ok',
+                    'code'      =>  '200',
+                    'message'   => "you followed $user->username successfully ",
+                    'returned'  => 'auth user and followed user',
+                    'data'      => [
+                        'user'      =>  null,
+                        'users'     => [
+                            [ // auth user
+                                'following' =>  User::find($this->authUser->id)
+                                    ->following()->get()->toArray()
+                            ],
+                            [ // currently followed user
+                                'followers' => User::find($user->id)
+                                    ->followers()->get()->toArray()
+                            ]
+                        ],
+                        'design'   => null,
+                        'designs'   => null,
+                        'comment'   => null,
+                        'comments'   => null,
+                    ]
+                ]);
         }
+    }
 
-        // then we see followers are the same as followings
-        $followings = $this->authUser->following()->get();
-        $response->assertJson([
-            "code" => "200"
-        ]);
+    /** @test */
+    public function an_authenticated_user_can_unfollow_the_followed_users_of_hers(){
+        // given we have some users that auth user is following them
+        $users = $this->users; $auth_user = $this->authUser;
+        // when the auth user unfollow them
+        foreach ($users as $user ){
+            $response = $this->json('get', '/api/users/unfollow/' . $user->id);
+            // then we must not see them in our followers array
+            $followings = User::find($auth_user->id)->following()->get()->toArray();
+            $response->assertStatus(200)
+                    ->assertJson([
+                        'status'    => 'ok',
+                        'code'      => '200',
+                        'data'      => [
+                            'users' => [
+                                [ 'following' => $followings ], // auth user
+                                [ 'followers' => User::find($user->id)->followers()->get()->toArray() ] // subject_user
+                            ]
+                        ]
+                    ]);
+        }
     }
 
     /** @test */
@@ -132,7 +176,11 @@ class UserTest extends TestCase
         $response = $this->json('get', '/api/users/followings/' . $this->authUser->id);
 
         $response->assertStatus(200)->assertJson([
-            "code"  => "200"
+            'status'    => 'ok',
+            "code"      => "200",
+            'data'      => [
+                'users' => User::find($this->authUser->id)->following()->get()->toArray()
+            ]
         ]);
     }
 
@@ -149,7 +197,11 @@ class UserTest extends TestCase
         $response = $this->json('get', '/api/users/followers/' . $this->authUser->id);
 
         $response->assertStatus(200)->assertJson([
-            "code" => "200"
+            'status'    => 'ok',
+            "code" => "200",
+            'data' => [
+                'users' => User::find($this->authUser->id)->followers()->get()->toArray()
+            ]
         ]);
     }
 

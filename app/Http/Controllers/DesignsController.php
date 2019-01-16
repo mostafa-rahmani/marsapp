@@ -22,7 +22,7 @@ class DesignsController extends Controller
     {
         $designs = Design::where('blocked', '0')
                     ->paginate(20);
-        return $designs;
+        return response()->json($designs, 200);
     }
 
 
@@ -70,7 +70,7 @@ class DesignsController extends Controller
         $response =  [
             "status"    =>  "error",
             "code"      =>  "404",
-            "message"   => "design could not be found",
+            "message"   => "design not found",
             "returned"  => null,
             "data"      => [
                 "user"      => null,
