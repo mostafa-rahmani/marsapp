@@ -148,6 +148,7 @@ class DesignTest extends TestCase
     public function logged_in_user_can_receive_following_users_designs(){
         // given we have an authenticated user that follows multiple other users
         $users = factory(User::class, 2)->create();
+        
         foreach ($users as $user ){
             factory(Design::class, 2)->create([
                 "user_id" => $user->id
@@ -159,10 +160,11 @@ class DesignTest extends TestCase
         // then we receive followed users designs
         $response->assertStatus(200)->assertJson([
             'current_page' => '1',
-            'data' => array_merge(
-                $users[0]->designs()->get()->toArray(),
-                $users[1]->designs()->get()->toArray()
-            )
+            'data' => $users[0]->designs()->get()->toArray()
+        ]);
+        $response->assertStatus(200)->assertJson([
+            'current_page' => '1',
+            'data' => $users[1]->designs()->get()->toArray()
         ]);
     }
 

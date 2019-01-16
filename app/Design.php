@@ -78,4 +78,5 @@ class Design extends Model
         $array[$this->getKeyName()] = $this->getKey();
         return $array;
     }
+
 }

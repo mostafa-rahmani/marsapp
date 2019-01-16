@@ -49,8 +49,8 @@
                     <h4 class="text-center my-5">اپلیکیشن مارس توسط این توسعه دهنگان خلاق ساخته شده</h4>
                     <div class="d-flex flex-column flex-md-row justify-content-center">
                         <div class="card border-0 card__one my-4 text-center mx-md-4 mx-auto">
-                            <a href="{{ $settings->web_developer_url }}">
-                            <img src="{{ Storage::url('public/' . $settings->web_developer_img) }}" alt="" class="card-img-top">
+                            <a  class="developer_img web-dev" href="{{ $settings->web_developer_url }}" 
+                                style="background-image: url({{ Storage::url('public/' . $settings->web_developer_img ) }})">
                             </a>
                             <div class="card-body">
                                 <h5>مصطفی رحمانی </h5>
@@ -58,8 +58,8 @@
                             </div>
                         </div>
                         <div class="card border-0 my-4 mx-auto mx-md-4 text-center card__two">
-                            <a href="{{ $settings->android_developer_url }}">
-                                <img src="{{ Storage::url('public/' . $settings->android_developer_img) }}" alt="" class="card-img-top">
+                            <a href="{{ $settings->android_developer_url }}" class="developer_img android-dev"
+                                    style="background-image: url({{ Storage::url('public/' . $settings->android_developer_img ) }})">
                             </a>
                             <div class="card-body">
                                 <h5>علیرضا عیسی زاده</h5>
