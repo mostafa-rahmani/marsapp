@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::group([ 'prefix' => 'users'],function (){
 
     Route::get('/', 'UsersController@index');
-    Route::get('{user} ', 'UsersController@show');
+    Route::get('{user}', 'UsersController@show');
     Route::post('/update', 'UsersController@update');
     Route::delete('/{user}', 'UsersController@delete');
     Route::get('/follow/{user}', 'UsersController@follow');

@@ -230,7 +230,7 @@ class AdminController extends Controller
     }
 
     public function deleteLink(Request $request)
-    {
+{
         $id = $request->id;
         if ($row = DB::table('footer_link')->where('id', $id)){
             $row->delete();

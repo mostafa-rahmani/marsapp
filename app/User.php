@@ -154,7 +154,7 @@ class User extends Authenticatable
 
    public function toSearchableArray()
    {
-       $array = $this->only('bio', 'name', 'email');
+       $array = $this->only('bio', 'username', 'email');
        $array[$this->getKeyName()] = $this->getKey();
        return $array;
    }
