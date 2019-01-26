@@ -12,6 +12,7 @@
                 </li>
             </ul>
             <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">اپلیکیشن مارس</a></h1>
+            <img src="/svg/logo.png" alt="" style="width: 25px">
         </div>
   </nav>
 @endsection
@@ -30,7 +31,12 @@
                    <h1 class="text-center my-5">{{ $data->landing_title }}</h1>
                    <p class="text-center">{{ $data->landing_description }}</p>
                </div>
-               <a href="/download" class="px-5 mx-auto download-btn text-white">دانلود مستقیم</a>
+               <a id="download-button" href="/download" class="px-5 mx-auto download-btn text-white">
+                   {{ $data->button_text }}
+                   <img src="/svg/logo.png" class="mx-1" alt="" >
+                   <span id="download-button-span" ></span>
+               </a>
+
            </div>
            <div class="col-lg-4 text-center"></div>
        </div>

@@ -3,6 +3,7 @@
 namespace Tests\Unit\User;
 
 
+use App\Http\Resources\UserCollection;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Psy\Util\Str;
@@ -51,7 +52,6 @@ class UserTest extends TestCase
                 "comments"   => null
             ]
         ];
-
         $response->assertJson($responseData);
     }
 
@@ -76,6 +76,20 @@ class UserTest extends TestCase
         //? Assert the old files do not exist
         Storage::disk('public')->assertMissing( $bu_profile_background );
         Storage::disk('public')->assertMissing( $bu_profile_image );
+
+        $profile_image = 'profile_image_' . date('Y-m-d_h-m') .  "_{$user->id}_" . '.' . $file->getClientOriginalExtension();
+        $profile_background = 'profile_bg_' . date('Y-m-d_h-m')  .  "_{$user->id}_" . '.' . $file->getClientOriginalExtension();
+        $response->assertStatus(200)->assertJson([
+            'data' => [
+                'user'  => [
+                    'profile_image' => url('/') . '/' . Storage::url('public/' . $profile_image),
+                    'profile_background'    => url('/') . '/' . Storage::url('public/' . $profile_background),
+                    "username" => "chloe.grace",
+                    "bio"      => "this is my updated bio",
+                    "instagram" => "rhmostafa"
+                ]
+            ]
+        ]);
 
         //? Assert the new files do exist
         Storage::disk('public')->assertExists(  $user->profile_image );
@@ -123,15 +137,14 @@ class UserTest extends TestCase
                     'message'   => "you followed $user->username successfully ",
                     'returned'  => 'auth user and followed user',
                     'data'      => [
-                        'user'      =>  null,
+                        'user'      =>  [ // currently followed user
+                            'followers' => User::find($user->id)
+                                ->followers()->get()->toArray()
+                        ],
                         'users'     => [
                             [ // auth user
                                 'following' =>  User::find($this->authUser->id)
                                     ->following()->get()->toArray()
-                            ],
-                            [ // currently followed user
-                                'followers' => User::find($user->id)
-                                    ->followers()->get()->toArray()
                             ]
                         ],
                         'design'   => null,
@@ -157,9 +170,9 @@ class UserTest extends TestCase
                         'status'    => 'ok',
                         'code'      => '200',
                         'data'      => [
+                            'user' => [ 'followers' => User::find($user->id)->followers()->get()->toArray() ], // subject_user
                             'users' => [
                                 [ 'following' => $followings ], // auth user
-                                [ 'followers' => User::find($user->id)->followers()->get()->toArray() ] // subject_user
                             ]
                         ]
                     ]);
@@ -171,16 +184,16 @@ class UserTest extends TestCase
     {
 
         foreach ($this->users as $user){
-            $this->json('get', '/api/users/follow/' . $user->id);
+            $this->authUser->following()->attach($user);
         }
         $response = $this->json('get', '/api/users/followings/' . $this->authUser->id);
 
         $response->assertStatus(200)->assertJson([
             'status'    => 'ok',
             "code"      => "200",
-            'data'      => [
-                'users' => User::find($this->authUser->id)->following()->get()->toArray()
-            ]
+//            'data'      => [
+//                'users' => new UserCollection(User::find($this->authUser->id)->following()->get())
+//            ]
         ]);
     }
 
@@ -189,19 +202,15 @@ class UserTest extends TestCase
     {
 
         foreach ($this->users as $user){
-            $this->actingAs($user);
-            $this->json('get', '/api/users/follow/' . $this->authUser->id);
+            $user->following()->attach($this->authUser);
         }
-        $this->actingAs($this->authUser);
-
         $response = $this->json('get', '/api/users/followers/' . $this->authUser->id);
-
         $response->assertStatus(200)->assertJson([
             'status'    => 'ok',
             "code" => "200",
-            'data' => [
-                'users' => User::find($this->authUser->id)->followers()->get()->toArray()
-            ]
+//            'data' => [
+//                'users' => new UserCollection(User::find($this->authUser->id)->followers()->get())
+//            ]
         ]);
     }
 

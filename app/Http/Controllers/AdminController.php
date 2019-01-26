@@ -115,14 +115,20 @@ class AdminController extends Controller
 
     public function updateSettings(Request $request)
     {
-        $this->validate($request, [
-            'landing_description' => 'String|min:125',
-            'landing_title' => 'String|min:20',
-            'admin_register_on' => 'Boolean',
-            'app_download_url' => 'String'
-        ]);
+        try {
+            $this->validate($request, [
+                'landing_description' => 'String|min:125',
+                'landing_title' => 'String|min:20',
+                'admin_register_on' => 'Boolean',
+                'app_download_url' => 'String',
+                'button_text' => 'String'
+            ]);
+        } catch (ValidationException $e) {
+            session()->flash('message', 'بروزرسانی تنظیمات موفق نبود لطفا دوباره تلاش کنید. ورودیها را با دقت وارد کنید.');
+            return redirect()->back();
+        }
 
-        $data = $request->only('landing_description', 'app_download_url', 'landing_title', 'admin_register_on');
+        $data = $request->only('landing_description', 'app_download_url', 'landing_title', 'button_text', 'admin_register_on');
         if (Setting::first()->update($data)){
             session()->flash('message', 'تنظیمات با موفقیت به روزرسانی شد.');
             return redirect()->back();

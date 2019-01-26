@@ -18,8 +18,9 @@ class SettingsTable extends Migration
             $table->string('landing_title')->nullable();
             $table->string('landing_description')->nullable();
             $table->string('app_download_url')->nullable();
+            $table->string('button_text')->nullable();
+            $table->string('second_button_text')->nullable();
             $table->boolean('admin_register_on')->nullable()->default(1);
-
             $table->text('about_first_text')->nullable();
             $table->string('about_first_img')->nullable();
             $table->text('about_second_text')->nullable();
@@ -40,7 +41,7 @@ class SettingsTable extends Migration
              و بازخورد دوستاتون رو هم داشته باشید.',
             'app_download_url' => 'cafebazaar.ir',
             'admin_register_on' => 1,
-
+            'button_text'   => 'دانلود مستقیم',
             'about_first_text' => 'این یک دیتای ساختگی است. تنها برای تست',
             'about_second_text' => 'این یک دیتای ساختگی است. تنها برای تست',
             'about_first_img' => 'https://getbootstrap.com/docs/4.1/assets/img/bootstrap-stack.png',

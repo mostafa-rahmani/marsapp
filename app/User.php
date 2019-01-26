@@ -78,7 +78,8 @@ class User extends Authenticatable
     public function getBackgroundImageUrlAttribute()
     {
         $image = $this->attributes['profile_background'];
-        return  $image ? url()->to("\\") . trim( Storage::url('public/' . $image), '/') : $image ;
+        $url = $image ? url()->to("\\") . trim( Storage::url('public/' . $image), '/') : $image ;
+        return $url;
     }
 
     public function getInstagramUrlAttribute()
@@ -88,7 +89,8 @@ class User extends Authenticatable
     public function getProfileImageUrlAttribute()
     {
         $image = $this->attributes['profile_image'];
-        return $image ? image_url($image, 'pi') : $image ;
+        $url = $image ? image_url($image, 'pi') : $image ;
+        return $url;
     }
     // users that follow this user
     public function followers() {
@@ -142,7 +144,7 @@ class User extends Authenticatable
     }
     public function isBlocked(){
 
-        return $this->blocked == "0";
+        return $this->blocked == "1";
     }
     public function seenComments(){
         return $this->hasMany(Comment::class)->where('seen', '1');

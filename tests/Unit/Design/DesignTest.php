@@ -6,7 +6,7 @@ use App\Design;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
-
+use  Illuminate\Http\UploadedFile;
 
 class DesignTest extends TestCase
 {
@@ -23,6 +23,35 @@ class DesignTest extends TestCase
         $this->users = factory(User::class, 5)->create();
         $this->designs = factory(Design::class, 5)->create();
         $this->actingAs($this->authUser, 'api');
+    }
+
+    /** @test */
+    public function client_can_create_design()
+    {
+        $file = UploadedFile::fake()->image('avatar.jpg');
+        $response = $this->json('post', '/api/designs/create', [
+            'description'   => 'this is my description',
+            'image' =>  $file,
+            'is_download_allowed'   => true
+        ]);
+        $response->assertStatus(200)
+                ->assertJson([
+                    'data'  => [
+                        'user'  => [
+                            'designs'   => [
+                                [
+                                    'description'   => 'this is my description',
+                                    'is_download_allowed'   => '1',
+                                    'likes' => []
+                                ]
+                            ]
+                        ],
+                        'design'    => [
+                            'description'   => 'this is my description',
+                            'is_download_allowed'   => '1'
+                        ]
+                    ]
+                ]);
     }
 
     /** @test */
@@ -55,7 +84,7 @@ class DesignTest extends TestCase
                     ],
                     'users'     => null,
                     'design'    => [
-                        "likes"       => Design::find($design->id)->likes()->get()->toArray()
+                        "likes"   => Design::find($design->id)->likes()->get()->toArray()
                     ],
                     'designs'   => null,
                     'comment'   => null,
@@ -148,23 +177,22 @@ class DesignTest extends TestCase
     public function logged_in_user_can_receive_following_users_designs(){
         // given we have an authenticated user that follows multiple other users
         $users = factory(User::class, 2)->create();
-        
+
         foreach ($users as $user ){
             factory(Design::class, 2)->create([
                 "user_id" => $user->id
             ]);
-            $this->json("get", "/api/users/follow/" . $user->id);
+            $this->authUser->following()->attach($user);
         }
         //when we request for following designs
         $response = $this->json("get", "/api/designs/following/get");
-        // then we receive followed users designs
+        // then we receive followed users designsWW
         $response->assertStatus(200)->assertJson([
             'current_page' => '1',
-            'data' => $users[0]->designs()->get()->toArray()
-        ]);
-        $response->assertStatus(200)->assertJson([
-            'current_page' => '1',
-            'data' => $users[1]->designs()->get()->toArray()
+            'data' => array_merge(
+                $users[1]->designs()->get()->toArray(),
+                $users[0]->designs()->get()->toArray()
+            )
         ]);
     }
 

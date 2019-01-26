@@ -49,7 +49,7 @@
                     <h4 class="text-center my-5">اپلیکیشن مارس توسط این توسعه دهنگان خلاق ساخته شده</h4>
                     <div class="d-flex flex-column flex-md-row justify-content-center">
                         <div class="card border-0 card__one my-4 text-center mx-md-4 mx-auto">
-                            <a  class="developer_img web-dev" href="{{ $settings->web_developer_url }}" 
+                            <a  class="developer_img web-dev" href="{{ $settings->web_developer_url }}"
                                 style="background-image: url({{ Storage::url('public/' . $settings->web_developer_img ) }})">
                             </a>
                             <div class="card-body">

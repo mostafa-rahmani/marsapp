@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property mixed blocked
@@ -33,8 +34,10 @@ class User extends JsonResource
             "blocked"   => $this->blocked,
             "instagram" => $this->instagram,
             "instagram_url" => $this->instagram ? 'https://www.instagram.com/' . $this->instagram  : null,
-            "profile_image" => $this->profile_image ? image_url($this->profile_image, 'pi') : null,
-            "profile_background"  => $this->profile_background ? image_url($this->profile_background, 'pg') : null,
+            "profile_image" => $this->profile_image ? url('/') . '/' .
+                Storage::url('public/' . $this->profile_image ) : null,
+            "profile_background"  => $this->profile_background ? url('/') . '/' .
+                Storage::url('public/' . $this->profile_background) : null,
             "seen_comments" => $this->seenComments()->get(),
             "designs"   => $this->designs()->get(),
             "following" => $this->following()->get(),

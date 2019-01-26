@@ -6,6 +6,8 @@ use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
 use App\User;
 use App\Http\Resources\User as UserResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 
 class UsersController extends Controller
@@ -41,26 +43,38 @@ class UsersController extends Controller
 
     public function show(Request $request)
     {
-        $user = User::find($request->user);
-
+        if ($user = User::find($request->user)){
+            $response = [
+                "status"    =>  "ok",
+                "code"      =>  "200",
+                "message"   => "user returned successfully",
+                "returned"  => "the requested user object",
+                "data"      => [
+                    "user"      => new UserResource($user),
+                    "users"     => null,
+                    "design"    => null,
+                    "designs"    => null,
+                    "comment"    => null,
+                    "comments"   => null
+                ]
+            ];
+            return response()->json($response, 200);
+        }
         $response = [
-            "status"    =>  $user ? "ok" : "error",
-            "code"      =>  $user ? "200" : "404",
-            "message"   => $user ? "user returned successfully" : "user not found",
-            "returned"  => $user ? "the requested user object" : null,
+            "status"    =>  "error",
+            "code"      =>  "404",
+            "message"   => 'User Not Found',
+            "returned"  => null,
             "data"      => [
                 "user"      => new UserResource($user),
                 "users"     => null,
-
                 "design"    => null,
                 "designs"    => null,
-
                 "comment"    => null,
                 "comments"   => null
             ]
         ];
-
-        return response()->json($response, 200);
+        return response()->json($response, 404);
     }
 
     /**
@@ -71,30 +85,48 @@ class UsersController extends Controller
      */
     public function update(Request $request)
     {
-            $this->validate($request, [
-                'username' => 'String|unique:users',
-                'instagram' => 'String',
-                'bio' => 'String',
-                'profile_background' => 'image',
-                'profile_image' => 'image'
-            ]);
-
+        $this->validate($request, [
+            'username' => 'String|unique:users',
+            'instagram' => 'String',
+            'bio' => 'String',
+            'profile_background' => 'image',
+            'profile_image' => 'image'
+        ]);
         $data = $request->only('username', 'instagram', 'bio' );
         if ($instagram = $request->instagram){
             $data['instagram'] =  $instagram;
         }
         $user = $request->user();
         if ($image = $request->file('profile_image')){
-            if ($data['profile_image'] = store_user_image($image, 'profile_image')){
+            try{
+                $data['profile_image'] = store_user_image($image, 'profile_image');
+            }catch (ValidationException $e){
+                $response = [
+                    "status"    =>  "error",
+                    "code"      =>  $e->status,
+                    "message"   => "error when saving file. try again or fix this.",
+                    "returned"  => null,
+                    "data"      => [
+                        "user"      => null,
+                        "users"     => null,
+                        "design"    => null,
+                        "designs"    => null,
+                        "comment"    => null,
+                        "comments"   => null,
+                    ]
+                ];
+                return response()->json($response, 500);
+            }
+            if ($data['profile_image']){
                 if ($old_filename = $user->profile_image){
-                     delete_image($old_filename , true); // name is contained prefix
+                    delete_image($old_filename , true); // name is contained prefix
                 }
             }
         }
         if ($image = $request->file('profile_background')){
             if ($data['profile_background'] = store_user_image($image, 'profile_background')){
                 if ($old_filename = $user->profile_background){
-                    delete_image($old_filename, true);
+                    delete_image($old_filename, false);
                 }
             }
         }
@@ -177,15 +209,12 @@ class UsersController extends Controller
                     "message"   => "you followed ". $subject_user->username ." successfully ",
                     "returned"  => "auth user and followed user",
                     "data"      => [
-                      "user"      => null,
+                      "user"      => new UserResource( User::find($request->user) ),
                       "users"     => [
-                          new UserResource( User::find($request->user()->id) ),
-                          new UserResource( User::find($request->user) )
+                          new UserResource( User::find($request->user()->id) )
                       ],
-
                       "design"    => null,
                       "designs"    => null,
-
                       "comment"    => null,
                       "comments"   => null
                       ]
@@ -199,14 +228,12 @@ class UsersController extends Controller
               "message"   => "user could not be found",
               "returned"  => null,
               "data"      => [
-
                 "user"      => null,
                 "users"     => null,
                 "design"    => null,
                 "designs"    => null,
                 "comment"    => null,
                 "comments"   => null
-
                 ]
             ];
             return response()->json($response, 404);
@@ -253,10 +280,9 @@ class UsersController extends Controller
                     "message" => "you successfully unfollowed $subject_user->username ",
                     "return" => "authenticated user and subject user",
                     "data" => [
-                      "user" => null,
+                      "user" => new UserResource(User::find($request->user)),
                       "users" => [
-                          $request->user(),
-                          User::find($request->user)
+                          new UserResource(User::find($request->user()->id))
                       ],
                       "design" => null,
                       "designs" => null,
@@ -267,16 +293,14 @@ class UsersController extends Controller
                   return response()->json($response, 200);
             }
             // if auth user is not following subeject user then we just return the user and subject
-
             $response = [
                 "status" => "ok",
                 "code" => "200",
                 "message" => "you successfully unfollowed $subject_user->username ",
                 "return" => "authenticated user and subject user",
                 "data" => [
-                    "user" => null,
+                    "user" => new UserResource( User::find($request->user()->id) ),
                     "users" => [
-                        new UserResource( User::find($request->user()->id) ),
                         new UserResource( User::find($request->user) )
                     ],
                     "design" => null,
@@ -286,7 +310,6 @@ class UsersController extends Controller
                 ]
             ];
             return response()->json($response, 200);
-
         }
         // if subject user could not be found in the Database
         $response = [
@@ -312,11 +335,7 @@ class UsersController extends Controller
      */
     public function followings(User $user)
     {
-        $followings = $user->following()
-                            ->with(
-                            'seenComments', 'designs', 'following',
-                                    'followers', 'likedDesigns', 'comments')
-                            ->get();
+        $followings = new UserCollection($user->following()->get());
         $response = [
             "status"    =>  "ok",
             "code"      =>  "200",
@@ -338,10 +357,7 @@ class UsersController extends Controller
 
     public function followers(User $user)
     {
-        $followers = $user->followers()->with(
-                            'seenComments', 'designs', 'following',
-                            'followers', 'likedDesigns', 'comments')
-                            ->get();
+        $followers = new UserCollection($user->followers()->get());
         $response = [
             "status"    =>  "ok",
             "code"      =>  "200",
@@ -350,7 +366,6 @@ class UsersController extends Controller
             "data"      => [
                 "user"      => null,
                 "users"     => $followers,
-
                 "design"    => null,
                 "designs"    => null,
 
