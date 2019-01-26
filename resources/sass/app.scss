@@ -197,16 +197,55 @@ a:hover {
     }
 
 }
-.developer_img{
+.developer_img {
     display: block;
     width: 200px;
     background-position: center center;
     height: 200px;
     background-repeat: no-repeat;
-    background-size:  cover;
-    border-radius:  100px;
+    background-size: cover;
+    border-radius: 100px;
+}
+#download-button{
+    position: relative;
+    width: 250px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+}
+#download-button-span{
+    position: absolute; right: 0; top:0; bottom: 0;
+    background-color: #fafafa;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-animation: donwloadAnimate 5000ms ;
+    -o-animation: donwloadAnimate 5000ms ;
+    animation: donwloadAnimate 5000ms ;
+    z-index: 888;
+}
+#download-button img{
+    height: 43px; position: absolute; right: -5; top: 0; bottom: 0;
+    -webkit-animation: logoAnimate 5000ms ;
+    -o-animation: logoAnimate 5000ms ;
+    animation: logoAnimate 5000ms ;
+    animation-duration: 5000ms;
+    z-index: 999;
 }
 
-
+// animation
+@keyframes donwloadAnimate {
+    0% { left: 0; }
+    75% { left: 250px; }
+    100% { left: 250px !important; }
+}
+@keyframes logoAnimate {
+    0% { left: -5px;
+        height: 55px; top: -5px}
+    //25% { left: 100px; }
+    //50% { left: 150px; }
+    75% { height: 55px; top: -5px; left: 205px; }
+    100% { right: -5px;  height: 43px; }
+}
 
 

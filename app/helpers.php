@@ -6,6 +6,7 @@
  * Time: 11:40 AM
  */
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 
 /**
@@ -71,11 +72,16 @@ if (! function_exists('store_design_image')) {
  *@params string, boolean
  * */
 if (! function_exists('store_user_image')) {
-     function store_user_image($image, $type){
+    /**
+     * @param $image
+     * @param $type
+     * @return string
+     */
+    function store_user_image($image, $type){
         $extension = $image->getClientOriginalExtension();
         $user = auth()->user();
         if ($type == 'profile_background'){
-            $filename  = 'profile_bg_' . date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
+            $filename  = 'profile_bg_' . date('Y-m-d_h-m') .  "_{$user->id}_" . '.' . $extension;
             $image = Image::make($image->getRealPath());
             $image->widen(900,  function ($constraint) {
                 $constraint->upsize();
@@ -84,7 +90,7 @@ if (! function_exists('store_user_image')) {
             return $filename;
         }
         if ($type == 'profile_image'){
-            $filename  = 'profile_image_' . date('Y-m-d_h-m-s') .  "_{$user->id}_" . '.' . $extension;
+            $filename  = 'profile_image_' . date('Y-m-d_h-m') .  "_{$user->id}_" . '.' . $extension;
             $image = Image::make($image->getRealPath());
             $image->widen(100,   function ($constraint) {
                 $constraint->upsize();

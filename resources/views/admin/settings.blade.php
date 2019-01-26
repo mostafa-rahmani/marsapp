@@ -23,6 +23,11 @@
                         <label for="landing_title">عنوان صفحه اصلی</label>
                         <input type="text" id="landing_title" name="landing_title" value="{{ $settings->landing_title }}"  class="form-control">
                     </div>
+                    <div class="col">
+                        <label for="button_text">متن دکمه دانلود اپ</label>
+                        <input type="text" id="button_text" name="button_text"
+                               value="{{ $settings->button_text }}"  class="form-control">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="landing_description">متن صفحه اصلی وبسایت</label>

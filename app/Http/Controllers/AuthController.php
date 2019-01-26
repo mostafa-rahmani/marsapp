@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use App\User;
-
+use App\Http\Resources\User as UserResource;
 class AuthController extends Controller
 {
     public function __construct()
@@ -75,15 +75,23 @@ class AuthController extends Controller
             $token->expires_at = Carbon::now()->addWeeks(1);
         $token->save();
         return response()->json([
-            "user" => $user->loadMissing(
-                'seenComments', 'designs', 'following',
-                'followers', 'likedDesigns', 'comments'
-            ),
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => Carbon::parse(
-                $tokenResult->token->expires_at
-            )->toDateTimeString()
+            'status' => 'ok',
+            'code'  =>  '200',
+            'message'   => 'User logged in successfully',
+            'returned'  => 'Authenticated user object, access_token, token_type, expires_at',
+            'data' => [
+                'user'  =>  new UserResource($user),
+                'users' => null,
+                'design'    => null,
+                'designs'   => null,
+                'comment'   => null,
+                'comments'  => null,
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => Carbon::parse(
+                    $tokenResult->token->expires_at
+                )->toDateTimeString()
+            ]
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\Http\Resources\User as UserResource;
 use App\Http\Requests\DesignRequest;
+use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -25,7 +26,6 @@ class DesignsController extends Controller
         return response()->json($designs, 200);
     }
 
-
     public function show(Request $request)
     {
         if ($design = Design::find($request->design)) {
@@ -39,10 +39,8 @@ class DesignsController extends Controller
                     "data"      => [
                         "user"      => null,
                         "users"     => null,
-
                         "design" => $design,
                         "designs"    => null,
-
                         "comment"    => null,
                         "comments"   => null
                     ]
@@ -161,7 +159,6 @@ class DesignsController extends Controller
         return response()->json($response , 404);
     }
 
-
     /**
      * creates a new design post
      * @param DesignRequest $request
@@ -169,8 +166,8 @@ class DesignsController extends Controller
      */
     public function store(DesignRequest $request)
     {
-        $user = auth()->user();
-        if ($user->isBlocked()){
+        $user = $request->user();
+        if (!$user->isBlocked()){
             $image = $request->file('image');
             $data = store_design_image($image);
             $data['user_id'] = $user->id;
@@ -183,12 +180,12 @@ class DesignsController extends Controller
                 "status"    =>  "ok",
                 "code"      =>  "200",
                 'message' => 'design successfully created',
-                "returned"  => "the created design",
+                "returned"  => "auth user, created design",
                 "data"      => [
-                    "user"      => null,
+                    "user"      => new UserResource(User::find($request->user()->id)),
                     "users"     => null,
 
-                    "design" => $design->loadMissing('user', 'comments', 'download_users', 'likes'),
+                    "design" => $design,
                     "designs"    => null,
 
                     "comment"    => null,
@@ -216,7 +213,6 @@ class DesignsController extends Controller
         return response()->json($response, 403);
     }
 
-
     /**
      * delete logged in user's design post
      * @param Request $request
@@ -230,21 +226,15 @@ class DesignsController extends Controller
                 $design->delete();
                 $response =  [
                     "status"    =>  "ok",
-                    "code"      =>  "204",
+                    "code"      =>  "200",
                     'message' => 'design was successfully deleted',
-                    "returned"  => null,
+                    "returned"  => 'auth user',
                     "data"      => [
-                        "user"      => null,
-                        "users"     => null,
-
-                        "design" => null,
-                        "designs"    => null,
-
-                        "comment"    => null,
-                        "comments"   => null
+                        "user"      => new UserResource(User::find($request->user()->id)),
+                        "users"     => null, "design" => null, "designs" => null, "comment"    => null,  "comments"   => null
                     ]
                 ];
-                return response()->json($response, 204);
+                return response()->json($response, 200);
             }
             $response =  [
                 "status"    =>  "error",
@@ -282,7 +272,6 @@ class DesignsController extends Controller
         return response()->json($response, 404);
     }
 
-
     /**
      * updates logged in user's design postp
      * @param Request $request
@@ -313,14 +302,9 @@ class DesignsController extends Controller
                             'message' => 'updating process was failed. try again',
                             "returned"  => null,
                             "data"      => [
-                                "user"      => null,
-                                "users"     => null,
-
-                                "design" => null,
-                                "designs"    => null,
-
-                                "comment"    => null,
-                                "comments"   => null
+                                "user"      => null, "users"     => null,
+                                "design" => null, "designs"    => null,
+                                "comment"    => null, "comments"   => null
                             ]
                         ];
                         return response()->json($response, 500);
@@ -331,14 +315,12 @@ class DesignsController extends Controller
                     "status"    =>  "ok",
                     "code"      =>  "200",
                     'message' => 'design was updated successfully',
-                    "returned"  => "the updated design, authenticated user",
+                    "returned"  => "authenticated user, updated design",
                     "data"      => [
                         "user"      => new UserResource($request->user()),
                         "users"     => null,
-
-                        "design" => $design,
+                        "design" => Design::find($design->id),
                         "designs"    => null,
-
                         "comment"    => null,
                         "comments"   => null
                     ]
@@ -353,10 +335,8 @@ class DesignsController extends Controller
                 "data"      => [
                     "user"      => null,
                     "users"     => null,
-
                     "design" => null,
                     "designs"    => null,
-
                     "comment"    => null,
                     "comments"   => null
                 ]
@@ -367,7 +347,7 @@ class DesignsController extends Controller
         $response =  [
             "status"    =>  "error",
             "code"      =>  "404",
-            'message' => 'Design Could Not Be Found',
+            'message' => 'Design Not Found',
             "returned"  => null,
             "data"      => [
                 "user"      => null,
@@ -381,7 +361,6 @@ class DesignsController extends Controller
         return response()->json($response, 404);
 
     }
-
 
     /**
      * list of other users designs that logged in user is following theme
@@ -429,7 +408,7 @@ class DesignsController extends Controller
                     "message"   => "you successfully liked design " . $design->id,
                     "returned" => "liked design and authenticated user",
                     "data"  => [
-                        "user" => new UserResource($request->user()),
+                        "user" => new UserResource(User::find($request->user()->id)),
                         "users" => "",
                         "design" => Design::find($request->design),
                         "designs" => "",
@@ -446,7 +425,7 @@ class DesignsController extends Controller
                 "message"   => "you successfully liked design " . $design->id,
                 "returned" => "liked design and authenticated user",
                 "data"  => [
-                    "user" => new UserResource($request->user()),
+                    "user" => new UserResource(User::find($request->user()->id)),
                     "users" => "",
                     "design" => Design::find($request->design),
                     "designs" => "",
@@ -490,12 +469,10 @@ class DesignsController extends Controller
                 "message"   => "You successfully disliked design " . $design->id,
                 "returned" => "disliked design and authenticated user",
                 "data"  => [
-                    "user" => new UserResource($request->user()),
+                    "user" => new UserResource(User::find($request->user()->id)),
                     "users" => "",
-
                     "design" => Design::find($request->design),
                     "designs" => "",
-
                     "comment" => "",
                     "comments" => ""
                 ]
@@ -508,12 +485,10 @@ class DesignsController extends Controller
             "message"   => "You successfully disliked design " . $design->id,
             "returned" => "disliked design and authenticated user",
             "data"  => [
-                "user" => new UserResource($request->user()),
+                "user" => new UserResource(User::find($request->user()->id)),
                 "users" => "",
-
                 "design" => Design::find($request->design),
                 "designs" => "",
-
                 "comment" => "",
                 "comments" => ""
             ]
