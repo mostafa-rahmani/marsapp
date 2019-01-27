@@ -39,7 +39,6 @@
     padding: 50px;
     h1{
         font-size: 2em;
-        //color: #fafafa;
     }
     p{
         font-size: 1.2em;
@@ -182,6 +181,9 @@ a:hover {
         background-size: 190px;
         background-position: top left;
     }
+    #landing-page{
+        background-size: 100px;
+    }
     #landing-page:after{
         display: block;
         -webkit-background-size: 140px;
@@ -219,17 +221,17 @@ a:hover {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    -webkit-animation: donwloadAnimate 5000ms ;
-    -o-animation: donwloadAnimate 5000ms ;
-    animation: donwloadAnimate 5000ms ;
+    -webkit-animation: donwloadAnimate 2000ms ;
+    -o-animation: donwloadAnimate 2000ms ;
+    animation: donwloadAnimate 2000ms ;
     z-index: 888;
 }
 #download-button img{
     height: 43px; position: absolute; right: -5; top: 0; bottom: 0;
-    -webkit-animation: logoAnimate 5000ms ;
-    -o-animation: logoAnimate 5000ms ;
-    animation: logoAnimate 5000ms ;
-    animation-duration: 5000ms;
+    -webkit-animation: logoAnimate 2000ms ;
+    -o-animation: logoAnimate 2000ms ;
+    animation: logoAnimate 2000ms ;
+    animation-duration: 2000ms;
     z-index: 999;
 }
 
@@ -248,4 +250,11 @@ a:hover {
     100% { right: -5px;  height: 43px; }
 }
 
-
+@media screen and (max-width: 1024px){
+    #download-button img{
+        display: none;
+    }
+    #download-button-span{
+        display: none;
+    }
+}

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Design;
+use App\Design; 
 use App\Setting;
 use Illuminate\Http\Request;
 use App\User;
@@ -30,7 +30,7 @@ class AdminController extends Controller
     public function __construct()
     {
 
-        $this->middleware('auth')->except('home', 'about');
+        $this->middleware('auth')->except('home', 'about', 'download');
         $this->lg_folder = 'full_size'; // storage path
         $this->sm_folder = 'public'; // storage path
         $this->lg_prefix = 'lg_';
