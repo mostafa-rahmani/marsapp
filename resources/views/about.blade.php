@@ -12,6 +12,7 @@
                 </li>
             </ul>
             <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">اپلیکیشن مارس</a></h1>
+            <img src="/svg/logo.png" alt="" style="width: 25px">
         </div>
     </nav>
 @endsection
