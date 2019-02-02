@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="{{ asset('css/app.css')  }}">
     
 @section('navbar')
-  <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid pr-xl-4">
+  <nav class="navbar navbar-expand-lg navbar-light navbar-home">
+        <div class="container-fluid  wrapper pr-xl-4">
             <ul class="navbar-nav ml-auto py-4">
                 <li class="nav-item">
                     <a href="/about">درباره  اپ</a>

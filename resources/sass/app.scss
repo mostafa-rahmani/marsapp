@@ -8,12 +8,11 @@
 @import '~bootstrap/scss/bootstrap';
 
 @import 'global';
-
  body{
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
-     background-color: #fff;
+    background-color: #fff;
 }
 #landing-page{
     min-width: 100vw;
@@ -23,6 +22,7 @@
     background-repeat: no-repeat;
     background-size: 50% 100%;
     padding: 50px;
+    overflow-x: hidden;
     #app-view{
         position: absolute;
         left: 35%;
@@ -30,7 +30,7 @@
         height: 80vh
     }
     &:after{
-        content: 'دینایی برای اشتراک طراحی و تفکرات ';
+        content: 'دنیایی برای اشتراک تفکرات ';
         color: #fafafa;
         -webkit-transform: rotate(-90deg);
            -moz-transform: rotate(-90deg);
@@ -60,7 +60,7 @@
     right: 0;
     z-index: 999;
     a{
-        color: #777 !important;
+        color: #555 !important;
     }
     h1{
         font-size: 1em;
@@ -95,13 +95,14 @@ a:hover {
 }
 
 // ========== about page ==========
-#about-page{
+#about-page{    
     padding-top: 100px;
     .about-item img{
-        width: 300px;
+        max-width: 500px;
+        // box-shadow: 30px 30px 100px;
     }
     .about-item{
-        margin: 50px 0;
+        color: #555
     }
 }
 

@@ -3,13 +3,17 @@
 	  #reset_pass_form{
         box-shadow: none;
     }
-    .navbar{
-	    a{
-	        color: #eaeaea !important;
-	    }
-	    h1{
-	        color: #eaeaea
-	    }
+       .about-item img{
+            width: 350px !important;
+            height: 350px !important;
+        }
+        .navbar-home{
+    	    a{
+    	        color: #eaeaea !important;
+    	    }
+    	    h1{
+    	        color: #eaeaea
+    	    }
 	}
     #landing-page{
 		position: relative;
@@ -33,13 +37,6 @@
 	        margin-left: auto;
 	    }
     }
-    .about-item img{
-        width: 200px !important;
-        height: 200px !important;
-        -webkit-border-radius: 100px;
-        -moz-border-radius: 100px;
-        border-radius: 100px;
-    }
 
     #app-view{
     	top: 50vh !important;
@@ -49,6 +46,10 @@
 }
 // max width 767px
 @media screen and (max-width: 767px){
+   // .about-item img{
+   //  width: 200px !important;
+   //  height: 200px !important;
+   //  }
 	#landing-page{
 		position: relative;
     	-webkit-background-size: cover;
