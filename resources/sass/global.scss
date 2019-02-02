@@ -61,12 +61,6 @@
 body, html, p, h1, h2, h3, h4, h5, h6, span{
 	font-family: IRANSans;
 }
-.download-btn{
-    background: linear-gradient(to left, #00ffdf 0%, #5a00ff 100%);
-    outline: none;
-    margin-top: 30px;
-    padding: 10px 20px;
-}
 .download-btn:hover{
     text-decoration: none;
     -webkit-box-shadow: 0px 0px 5px 0px #eee;
@@ -85,3 +79,23 @@ body, html, p, h1, h2, h3, h4, h5, h6, span{
     height: 100px;
 }
 
+/* button Main Styles */
+// Variables
+$color: #06eabe;
+$color-dark: #a53125;
+$speed: "0.4s";
+$transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
+.button {
+	display: block;
+	background-color: $color;
+	color: #fff;
+	font-size: 1.2em;
+	cursor: pointer;
+	overflow: hidden;
+	border-radius: 5px;
+	transition: $transition;
+	&:hover {
+		text-decoration: none;
+		box-shadow: 0 0 20px 0 rgba(0,0,0,.3);
+	}
+}

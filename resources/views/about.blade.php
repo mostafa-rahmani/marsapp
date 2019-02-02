@@ -2,17 +2,18 @@
 @section('header_links')
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
+    <title>مارس | درباره اپ</title>
     <link rel="stylesheet" href="{{ asset('css/app.css')  }}">
 @section('navbar')
     <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <ul class="navbar-nav ml-auto">
+        <div class="container-fluid pr-xl-4">
+            <ul class="navbar-nav ml-auto py-4">
                 <li class="nav-item">
-                    <a class="nav-link active" href="/about">درباره ما</a>
+                    <a href="/about">درباره  اپ</a>
                 </li>
             </ul>
-            <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">اپلیکیشن مارس</a></h1>
-            <img src="/svg/logo.png" alt="" style="width: 25px">
+             <h1 class="ml-4 my-auto"><a href="/" class="mr-2"> مارس</a></h1>
+            <img src="/svg/logo-circle.svg" alt="" style="width: 25px">
         </div>
     </nav>
 @endsection
@@ -32,7 +33,7 @@
         <div class="row about-item">
             <div class="col-lg-2 col-12"></div>
             <div class="col-12 col-md-6 col-lg-4 text-lg-right text-center">
-                <img src="{{ Storage::url('public/' . $settings->about_second_img) }}" alt="">
+                <img src="{{ Storage::url('public/' . $settings->about_second_img) }}">
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <p class="text-center text-md-right dialog-box mx-auto"> {{ $settings->about_second_text }} </p>

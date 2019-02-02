@@ -1,0 +1,83 @@
+// max width 991px
+@media screen and (max-width: 991px){
+	  #reset_pass_form{
+        box-shadow: none;
+    }
+    .navbar{
+	    a{
+	        color: #eaeaea !important;
+	    }
+	    h1{
+	        color: #eaeaea
+	    }
+	}
+    #landing-page{
+		position: relative;
+    	-webkit-background-size: cover;
+        background-size: cover;
+        background-position: center center;
+        .button{
+        	margin-left: auto;
+        }
+    	h1{
+    		text-align: right !important;
+        	font-size: 2em;
+        	color: #fff;
+        	padding-bottom: 20px
+	    }
+	    p{
+	    	text-align: right !important;
+	        font-size: 1.3em;
+	        color: #eaeaea;
+	        width: 70%;
+	        margin-left: auto;
+	    }
+    }
+    .about-item img{
+        width: 200px !important;
+        height: 200px !important;
+        -webkit-border-radius: 100px;
+        -moz-border-radius: 100px;
+        border-radius: 100px;
+    }
+
+    #app-view{
+    	top: 50vh !important;
+    	left: -10% !important;	
+    	width: 80% !important;
+    }
+}
+// max width 767px
+@media screen and (max-width: 767px){
+	#landing-page{
+		position: relative;
+    	-webkit-background-size: cover;
+        background-size: cover;
+        background-position: center center;
+        &:after, &:before{
+        	display: none;
+        }
+        .button{
+        	margin: 30px auto !important;
+        	font-size: .8em !important;
+        }
+    	h1{
+    		text-align: center !important;
+        	font-size: 1.3em !important;
+        	color: #fff;
+        	line-height: 1.6
+	    }
+	    p{
+	    	text-align: center !important;
+	        font-size: 1.1em !important;
+	        color: #eaeaea;
+	        width: 100% !important;
+	        margin: auto !important;
+	    }
+    }
+    #app-view{
+    	top: 60vh !important;
+    	left: 5% !important;	
+    	width: 90% !important;
+    }
+}

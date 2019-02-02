@@ -2,43 +2,44 @@
 @section('header_links')
   <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
+    <title>{{ $data->landing_title }}</title>
     <link rel="stylesheet" href="{{ asset('css/app.css')  }}">
+    
 @section('navbar')
   <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <ul class="navbar-nav ml-auto">
+        <div class="container-fluid pr-xl-4">
+            <ul class="navbar-nav ml-auto py-4">
                 <li class="nav-item">
-                    <a class="nav-link" href="/about">درباره ما</a>
+                    <a href="/about">درباره  اپ</a>
                 </li>
             </ul>
-            <h1 class="ml-3 my-auto"><a class="navbar-brand" href="/">اپلیکیشن مارس</a></h1>
-            <img src="/svg/logo.png" alt="" style="width: 25px">
+             <h1 class="ml-4 my-auto"><a href="/" class="mr-2"> مارس</a></h1>
+            <img src="/svg/logo-circle.svg" alt="" style="width: 25px">
         </div>
-  </nav>
+    </nav>
 @endsection
 @section('content')
-    <div id="landing-page" class="d-flex flex-column justify-content-center container">
+    <div id="landing-page" style="overflow: hidden;" class="d-flex flex-column justify-content-center container">
         @if($flash = session('changed_pass_msg'))
             <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
         @endif
         @if($flash = session('message'))
             <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
         @endif
-       <div class="row py-4">
-           <div class="col-lg-4 text-center"></div>
+       <div class="row py-4 mb-auto mt-3 my-lg-auto px-lg-0">
+          <img src="/svg/mobile.svg" alt="" id="app-view">
+           <div class="col-lg-8 text-center"></div>
            <div class="col-lg-4 text-center d-flex flex-column">
                <div class="my-0">
-                   <h1 class="text-center my-5">{{ $data->landing_title }}</h1>
-                   <p class="text-center">{{ $data->landing_description }}</p>
+                   <h1 class="text-right mb-xl-4">{{ $data->landing_title }}</h1>
+                   <p class="text-right">{{ $data->landing_description }}</p>
                </div>
-               <a id="download-button" href="/download" class="px-5 mx-auto download-btn text-white">
-                   {{ $data->button_text }}
-                   <img src="/svg/logo.png" class="mx-1" alt="" >
-                   <span id="download-button-span" ></span>
+               <a href="/download" role="button" class="py-3 mt-4 px-4 ml-auto button text-white">
+                    <span>{{ $data->button_text }}</span>
+                  <i class="fas fa-cloud-download-alt"></i>
                </a>
-
+            
            </div>
-           <div class="col-lg-4 text-center"></div>
        </div>
     </div>
 @endsection

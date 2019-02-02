@@ -15,33 +15,41 @@
     overflow-x: hidden;
      background-color: #fff;
 }
-#landing-page:after{
-    display: block;
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("/img/plans-bg-right.svg");
-    background-position: center right;
-    background-repeat: no-repeat;
-    overflow: hidden;
-    z-index: -100;
-
-}
 #landing-page{
     min-width: 100vw;
     min-height: 100vh;
-    background: url("/img/plans-bg-left.svg");
-    background-position: center left;
+    background: url("/img/blue-side.png");
+    background-position: left center;
     background-repeat: no-repeat;
+    background-size: 50% 100%;
     padding: 50px;
+    #app-view{
+        position: absolute;
+        left: 35%;
+        top: 15vh;
+        height: 80vh
+    }
+    &:after{
+        content: 'دینایی برای اشتراک طراحی و تفکرات ';
+        color: #fafafa;
+        -webkit-transform: rotate(-90deg);
+           -moz-transform: rotate(-90deg);
+            -ms-transform: rotate(-90deg);
+             -o-transform: rotate(-90deg);
+                transform: rotate(-90deg);
+        display: block;
+        left: -50px;
+        top: 41vh;
+        position: absolute;
+
+    }
     h1{
         font-size: 2em;
+        color: #444
     }
     p{
         font-size: 1.2em;
+        color: #777
         //color: #fafafa;
     }
 }
@@ -50,6 +58,13 @@
     top: 0;
     left: 0;
     right: 0;
+    z-index: 999;
+    a{
+        color: #777 !important;
+    }
+    h1{
+        font-size: 1em;
+    }
 }
 
 /* Links */
@@ -118,85 +133,12 @@ a:hover {
         -moz-border-radius: 100px;
         border-radius: 100px;
     }
-
 }
 
 @media screen and (max-width: 1024px){
-    #landing-page{
-        -webkit-background-size: 800px;
-        background-size: 800px;
-        background-position: center left;
-    }
-    #landing-page:after{
-        display: none;
-        -webkit-background-size: 400px;
-        background-size: 400px;
-        background-position: bottom right;
-    }
-    #landing-page{
-        h1, p{
-            color: #f5f8fa;
-        }
-    }
-
     #about-page .dialog-box{
         max-width: 300px
     }
-}
-
-@media screen and (max-width: 960px){
-    #reset_pass_form{
-        box-shadow: none;
-    }
-    #landing-page{
-        padding: 0px;
-        h1, p{
-            color: #2F3133;
-        }
-    }
-    #landing-page {
-        -webkit-background-size: 250px;
-        background-size: 250px;
-        background-position: top left;
-    }
-    #landing-page:after{
-        display: block;
-        -webkit-background-size: 250px;
-        background-size: 250px;
-        background-position: bottom right;
-    }
-
-
-}
-
-@media screen and (max-width: 760px){
-    #landing-page{
-        h1, p{
-            color: #2F3133;
-        }
-    }
-    #landing-page{
-        -webkit-background-size: 190px;
-        background-size: 190px;
-        background-position: top left;
-    }
-    #landing-page{
-        background-size: 100px;
-    }
-    #landing-page:after{
-        display: block;
-        -webkit-background-size: 140px;
-        background-size: 140px;
-        background-position: bottom right;
-    }
-    .about-item img{
-        width: 200px !important;
-        height: 200px !important;
-        -webkit-border-radius: 100px;
-        -moz-border-radius: 100px;
-        border-radius: 100px;
-    }
-
 }
 .developer_img {
     display: block;
@@ -207,53 +149,5 @@ a:hover {
     background-size: cover;
     border-radius: 100px;
 }
-#download-button{
-    position: relative;
-    width: 250px;
-    -webkit-border-radius: 50px;
-    -moz-border-radius: 50px;
-    border-radius: 50px;
-}
-#download-button-span{
-    position: absolute; right: 0; top:0; bottom: 0;
-    background-color: #fafafa;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -webkit-animation: donwloadAnimate 2000ms ;
-    -o-animation: donwloadAnimate 2000ms ;
-    animation: donwloadAnimate 2000ms ;
-    z-index: 888;
-}
-#download-button img{
-    height: 43px; position: absolute; right: -5; top: 0; bottom: 0;
-    -webkit-animation: logoAnimate 2000ms ;
-    -o-animation: logoAnimate 2000ms ;
-    animation: logoAnimate 2000ms ;
-    animation-duration: 2000ms;
-    z-index: 999;
-}
-
-// animation
-@keyframes donwloadAnimate {
-    0% { left: 0; }
-    75% { left: 250px; }
-    100% { left: 250px !important; }
-}
-@keyframes logoAnimate {
-    0% { left: -5px;
-        height: 55px; top: -5px}
-    //25% { left: 100px; }
-    //50% { left: 150px; }
-    75% { height: 55px; top: -5px; left: 205px; }
-    100% { right: -5px;  height: 43px; }
-}
-
-@media screen and (max-width: 1024px){
-    #download-button img{
-        display: none;
-    }
-    #download-button-span{
-        display: none;
-    }
-}
+// medai Query
+@import 'media_query.scss';
