@@ -70,12 +70,11 @@
                         </div>
                     </section>
                 </div>
-                <div class="col-12 col-lg-6 d-flex flex-row justify-content-end">
+                <div class="col-12 col-lg-6 d-flex flex-row justify-content-center">
                 <section id="developers">
                     <h4 class="text-center my-5">راه های تماس با ما</h4>
                     <ul class="list-unstyled">
                         @foreach($footer_links as $item)
-
                             <li class="text-center text-body">
                                @if($item->footer_url)
                                     <a class="text-body " href="{{$item->footer_url}}" >{{ $item->footer_link }}</a>
@@ -83,7 +82,6 @@
                                    {{ $item->footer_link }}
                                 @endif
                             </li>
-
                         @endforeach
                     </ul>
                 </section>
