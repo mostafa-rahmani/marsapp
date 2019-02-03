@@ -185,7 +185,7 @@ class DesignsController extends Controller
                     "user"      => new UserResource(User::find($request->user()->id)),
                     "users"     => null,
 
-                    "design" => $design,
+                    "design" => Design::find($design->id),
                     "designs"    => null,
 
                     "comment"    => null,

@@ -143,8 +143,20 @@ class AuthController extends Controller
             $is_valid = true;
         }
         $response = [
-          "message " => $message,
-          "is_valid" =>   $is_valid
+            'status'  => "ok",
+            'code'      =>  '200',
+            'message'   => $message,
+            'returned'  =>  $is_valid,
+            'data'      =>  [
+                "user"      => null,
+                "users"     => null,
+
+                "design" => null,
+                "designs"    => null,
+
+                "comment"    => null,
+                "comments"   => null
+            ]
         ];
         return response()->json($response, 200);
     }
