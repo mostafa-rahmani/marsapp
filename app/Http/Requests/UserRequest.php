@@ -16,6 +16,19 @@ class UserRequest extends FormRequest
         return true;
     }
 
+    public function messages()
+    {
+      return [
+        'username.string' => 'نام کاربری باید با استفاده از حروف ساخته شود',
+        'username.unique'  =>  'نام کاربری توسط شخص دیگری ثبت شده است',
+        'username.min'  =>  'نام کاربری نباید کم تر از 6 کاراکتر باشد',
+        'profile_image.image'  =>  'فایل برای تصویر پروفایل غیر مجاز است',
+        'profile_background.image'  =>  'فایل تصویر برای تصویر پس زمینه غیر مجاز است',
+        'bio.string' => 'بیوگرافی باید با استفاده از حروف ساخته شود',
+        'email.email'  =>  'ایمیل وافعی نیست',
+        'instagram.string'  =>  'آیدی اینستاگرام شما باید غیر مجاز است و باید از حروف تشکیل شود'
+      ];
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -25,12 +38,12 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'String|min:3|unique:users',
-            'profile_image_url'    => 'image',
-            'bio' => 'String',
-            'instagram' => 'String',
+            'username' => 'string|min:6|unique:users',
+            'profile_image'    => 'image',
+            'bio' => 'string',
+            'instagram' => 'string',
             'email' => 'email',
-            'profile_background' => 'required'
+            'profile_background' => 'image'
         ];
     }
 

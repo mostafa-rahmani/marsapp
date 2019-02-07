@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
 use App\User;
 use App\Http\Resources\User as UserResource;
+use App\Http\Requests\SignUp;
 class AuthController extends Controller
 {
     public function __construct()
@@ -15,13 +16,9 @@ class AuthController extends Controller
         $this->middleware('auth:api')->except('login', 'register');
     }
 
-    public function register(Request $request)
+    public function register(SignUp $request)
     {
-        $this->validate($request, [
-           'username'   => 'required|unique:users',
-           'email'      => 'required|email|unique:users',
-           'password'   => 'required|min:8|confirmed'
-        ]);
+
         $user = new User([
             'username' => $request->input('username'),
             'email' => $request->input('email'),
@@ -66,7 +63,18 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
         if(!Auth::attempt($credentials))
             return response()->json([
-                'message' => 'Unauthorized'
+                'status'  =>  'error',
+                'code'  =>  401,
+                'message'  =>  'رمز عبور یا ایمیل صحیح نسیت',
+                'returned'  =>  null,
+                'data'  => [
+                  'user'  =>  null,
+                  'users'  =>  null,
+                  'design'  =>  null,
+                  'designs'  =>  null,
+                  'comment'  =>  null,
+                  'comments'  =>  null
+                ]
             ], 401);
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');

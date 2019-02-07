@@ -27,6 +27,34 @@ class UserTest extends TestCase
     }
 
     /** @test */
+    public function user_can_signup()
+    {
+      $user = [
+        'email'  => 'mostafa@gmai.com',
+        'username'  => 'mostafa',
+        'password'  =>  'password',
+        'password_confirmation'  =>  'password',
+      ];
+      $response = $this->json('post', '/api/auth/register', $user);
+
+      $response->assertStatus(200)->assertJson([
+        'status'  => 'ok',
+        'code'  =>  200
+      ]);
+
+      // testing if the validation is working fine
+      $user = [
+        'email'  => 'mostafa@gmai.com',
+        'username'  => 'mostafa',
+        'password'  =>  'password',
+        'password_confirmation'  =>  'passwords',
+      ];
+      $response = $this->json('post', '/api/auth/register', $user);
+      dd($response->json());
+
+    }
+
+    /** @test */
     public function client_can_get_a_user_by_sending_an_id()
     {
         $user = factory(User::class)->create();
@@ -190,10 +218,7 @@ class UserTest extends TestCase
 
         $response->assertStatus(200)->assertJson([
             'status'    => 'ok',
-            "code"      => "200",
-//            'data'      => [
-//                'users' => new UserCollection(User::find($this->authUser->id)->following()->get())
-//            ]
+            "code"      => "200"
         ]);
     }
 
@@ -215,14 +240,3 @@ class UserTest extends TestCase
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
