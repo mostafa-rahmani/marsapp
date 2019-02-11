@@ -27,7 +27,12 @@ class PasswordResetController extends Controller
         $user = User::where('email', $request->email)->first();
         if (!$user){
             return response()->json([
-                'message' => 'We can\'t find a user with that e-mail address.' ], 404);
+                'status'    =>  'error',
+                'code'      =>  404,
+                'message' => 'ایمیل مورد نظر پیدا نشد',
+                'returned'  =>  null,
+                'data'  =>  null
+            ], 404);
         }
         $passwordReset = PasswordReset::updateOrCreate(
             ['email' => $user->email],
@@ -40,11 +45,14 @@ class PasswordResetController extends Controller
             $url = url('/find/'. $passwordReset->token);
             Mail::to($user)->send(new \App\Mail\resetPassword($url));
             return response()->json([
-                'message' => 'We have e-mailed your password reset link!'
-            ], 201);
+                'status'    =>  'ok',
+                'code'      =>  200,
+                'message' => 'ایمیل بازیابی رمز عبور برای شما ارسال شد. ( ایمیل ممکن است در پوشه ایمیل شما ذخیره شده شود ) ',
+                'returned'  =>  null,
+                'data'  =>  null
+            ], 200);
         }
     }
-
 
     /**
      * Find token password reset
@@ -71,7 +79,6 @@ class PasswordResetController extends Controller
         }
         return view('auth.reset_password_form', compact('passwordReset'));
     }
-
 
     /**
      * Reset password

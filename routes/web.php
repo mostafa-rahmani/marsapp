@@ -10,8 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('find/{token}', 'auth\PasswordResetController@find');
-Route::post('reset', 'auth\PasswordResetController@resetWeb');
+Route::get('find/{token}', 'Auth\PasswordResetController@find');
+Route::post('reset', 'Auth\PasswordResetController@resetWeb');
 Route::get('/', 'AdminController@home')->name('home');
 Route::get('/about', 'aboutController@about')->name('about');
 Route::get('/download', 'AdminController@download');

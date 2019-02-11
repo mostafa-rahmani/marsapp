@@ -21,10 +21,10 @@
 @section('content')
     <div id="landing-page" style="overflow: hidden;" class="d-flex flex-column justify-content-center container">
         @if($flash = session('changed_pass_msg'))
-            <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
+            <div class="alert block flash-message sm-mx-auto mr-md-auto  text-center  alert-info my-2" id="flash_message">{{ $flash }}</div>
         @endif
         @if($flash = session('message'))
-            <p class="alert flash-message text-right alert-success my-2" id="flash_message">{{ $flash }}</p>
+            <div class="alert block flash-message  sm-mx-auto mr-md-auto  text-center  alert-info my-2" id="flash_message">{{ $flash }}</div>
         @endif
        <div class="row py-4 mb-auto mt-3 my-lg-auto px-lg-0">
           <img src="/svg/mobile.svg" alt="" id="app-view">

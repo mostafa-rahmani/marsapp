@@ -68,11 +68,12 @@ body, html, p, h1, h2, h3, h4, h5, h6, span{
     box-shadow: 0px 0px 5px 0px #eee;
     border: none;
 }
-.flash-message{
-    position: absolute;
-    right: 0;
-    bottom: 50px;
-    z-index: 100
+#flash_message{
+	-webkit-transition: all 400ms;
+	-moz-transition: all 400ms;
+	-ms-transition: all 400ms;
+	-o-transition: all 400ms;
+	transition: all 400ms;
 }
 .svg-icon{
     width: 100px;
