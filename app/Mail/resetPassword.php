@@ -28,6 +28,7 @@ class resetPassword extends Mailable
      */
     public function build()
     {
-        return $this->markdown('email.resetPassword');
+        return $this->subject('بازیابی رمز عبور')
+            ->markdown('email.resetPassword');
     }
 }
