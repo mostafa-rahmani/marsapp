@@ -4,7 +4,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <title>{{ $data->landing_title }}</title>
     <link rel="stylesheet" href="{{ asset('css/app.css')  }}">
-    
+
 @section('navbar')
   <nav class="navbar navbar-expand-lg navbar-light navbar-home">
         <div class="container-fluid  wrapper pr-xl-4">
@@ -27,7 +27,7 @@
             <div class="alert block flash-message  sm-mx-auto mr-md-auto  text-center  alert-info my-2" id="flash_message">{{ $flash }}</div>
         @endif
        <div class="row py-4 mb-auto mt-3 my-lg-auto px-lg-0">
-          <img src="/svg/mobile.svg" alt="" id="app-view">
+          <img src="/img/new-mobile.png" alt="" id="app-view">
            <div class="col-lg-8 text-center"></div>
            <div class="col-lg-4 text-center d-flex flex-column">
                <div class="my-0">
@@ -38,7 +38,7 @@
                     <span>{{ $data->button_text }}</span>
                   <i class="fas fa-cloud-download-alt"></i>
                </a>
-            
+
            </div>
        </div>
     </div>
