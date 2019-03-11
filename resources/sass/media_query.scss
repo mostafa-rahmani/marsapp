@@ -40,16 +40,10 @@
 
     #app-view{
     	top: 50vh !important;
-    	left: -10% !important;	
-    	width: 80% !important;
     }
 }
 // max width 767px
 @media screen and (max-width: 767px){
-   // .about-item img{
-   //  width: 200px !important;
-   //  height: 200px !important;
-   //  }
 	#landing-page{
 		position: relative;
     	-webkit-background-size: cover;
@@ -78,7 +72,5 @@
     }
     #app-view{
     	top: 60vh !important;
-    	left: 5% !important;	
-    	width: 90% !important;
     }
 }

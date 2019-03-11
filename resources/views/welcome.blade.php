@@ -14,7 +14,7 @@
                 </li>
             </ul>
              <h1 class="ml-4 my-auto"><a href="/" class="mr-2"> مارس</a></h1>
-            <img src="/svg/logo-circle.svg" alt="" style="width: 25px">
+             <img src="/svg/logo-circle.svg" alt="" style="width: 25px">
         </div>
     </nav>
 @endsection
@@ -27,7 +27,9 @@
             <div class="alert block flash-message  sm-mx-auto mr-md-auto  text-center  alert-info my-2" id="flash_message">{{ $flash }}</div>
         @endif
        <div class="row py-4 mb-auto mt-3 my-lg-auto px-lg-0">
-          <img src="/img/new-mobile.png" alt="" id="app-view">
+          <div id="app-view" class="d-flex">
+            <img src="/img/new-mobile.png" class="mx-auto d-block">
+          </div>
            <div class="col-lg-8 text-center"></div>
            <div class="col-lg-4 text-center d-flex flex-column">
                <div class="my-0">

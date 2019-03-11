@@ -25,9 +25,13 @@
     overflow-x: hidden;
     #app-view{
         position: absolute;
-        left: 35%;
+        left: 0;
+        right: 0;
+        overflow: hidden;
         top: 15vh;
-        height: 80vh
+        img{
+            height: 80vh
+        }
     }
     &:after{
         content: 'دنیایی برای اشتراک تفکرات ';
@@ -95,7 +99,7 @@ a:hover {
 }
 
 // ========== about page ==========
-#about-page{    
+#about-page{
     padding-top: 100px;
     .about-item img{
         max-width: 500px;
