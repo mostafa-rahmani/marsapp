@@ -50,8 +50,7 @@ class UserTest extends TestCase
         'password_confirmation'  =>  'passwords',
       ];
       $response = $this->json('post', '/api/auth/register', $user);
-      dd($response->json());
-
+      $response->assertStatus(200);
     }
 
     /** @test */
