@@ -21,7 +21,7 @@ class Design extends Model
     protected $perPage = 1;
     protected $table = 'designs';
     protected $hidden = ['pivot'];
-    protected $with = ['user', 'comments', 'download_users', 'likes'];
+//    protected $with = ['user', 'comments', 'download_users', 'likes'];
     protected $appends = ['download_count', 'like_count'];
     protected $fillable = ['description', 'small_image', 'original_width', 'original_height', 'is_download_allowed', 'image', 'user_id'];
 

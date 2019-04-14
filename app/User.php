@@ -78,7 +78,8 @@ class User extends Authenticatable
     public function getBackgroundImageUrlAttribute()
     {
         $image = $this->attributes['profile_background'];
-        $url = $image ? url()->to("\\") . trim( Storage::url('public/' . $image), '/') : $image ;
+        $url = $image ? url('/') . '/' .
+        Storage::url('public/' . $image) : null;
         return $url;
     }
 

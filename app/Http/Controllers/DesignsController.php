@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Design;
 use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Design as DesignResource;
 use App\Http\Requests\DesignRequest;
 use App\User;
 use Illuminate\Support\Facades\Gate;
@@ -39,7 +40,7 @@ class DesignsController extends Controller
                     "data"      => [
                         "user"      => null,
                         "users"     => null,
-                        "design" => $design,
+                        "design" => new DesignResource($design),
                         "designs"    => null,
                         "comment"    => null,
                         "comments"   => null
@@ -90,7 +91,7 @@ class DesignsController extends Controller
      */
     public function download(Request $request)
     {
-        if($design = Design::find($request->design)){
+        if ( $design = Design::find($request->design) ) {
             if (Gate::allows('download', $design)){
                 $image = $design->image;
                 $path = image_path($image, 'full');
@@ -185,7 +186,7 @@ class DesignsController extends Controller
                     "user"      => new UserResource(User::find($request->user()->id)),
                     "users"     => null,
 
-                    "design" => Design::find($design->id),
+                    "design" => new DesignResource(Design::find($design->id)),
                     "designs"    => null,
 
                     "comment"    => null,
@@ -319,7 +320,7 @@ class DesignsController extends Controller
                     "data"      => [
                         "user"      => new UserResource($request->user()),
                         "users"     => null,
-                        "design" => Design::find($design->id),
+                        "design" => new DesignResource(Design::find($design->id)),
                         "designs"    => null,
                         "comment"    => null,
                         "comments"   => null
@@ -410,7 +411,7 @@ class DesignsController extends Controller
                     "data"  => [
                         "user" => new UserResource(User::find($request->user()->id)),
                         "users" => "",
-                        "design" => Design::find($request->design),
+                        "design" => new DesignResource(Design::find($request->design)),
                         "designs" => "",
                         "comment" => "",
                         "comments" => ""
@@ -427,7 +428,7 @@ class DesignsController extends Controller
                 "data"  => [
                     "user" => new UserResource(User::find($request->user()->id)),
                     "users" => "",
-                    "design" => Design::find($request->design),
+                    "design" => new DesignResource(Design::find($request->design)),
                     "designs" => "",
                     "comment" => "",
                     "comments" => ""
@@ -471,7 +472,7 @@ class DesignsController extends Controller
                 "data"  => [
                     "user" => new UserResource(User::find($request->user()->id)),
                     "users" => "",
-                    "design" => Design::find($request->design),
+                    "design" => new DesignResource(Design::find($request->design)),
                     "designs" => "",
                     "comment" => "",
                     "comments" => ""
@@ -487,7 +488,7 @@ class DesignsController extends Controller
             "data"  => [
                 "user" => new UserResource(User::find($request->user()->id)),
                 "users" => "",
-                "design" => Design::find($request->design),
+                "design" => new DesignResource(Design::find($request->design)),
                 "designs" => "",
                 "comment" => "",
                 "comments" => ""

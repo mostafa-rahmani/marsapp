@@ -3,10 +3,13 @@
 use Faker\Generator as Faker;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use  Illuminate\Http\UploadedFile;
+
 $factory->define(\App\Design::class, function (Faker $faker) {
 
-//    $image = Image::make($faker->imageUrl($width = 640, $height = 480))->encode();
-    $image = Image::make(storage_path('app/public/web_developer_img_.jpeg'))->encode();
+//    $image = Image::make($faker->imageUrl($width = 640, $height = 480))->encode();zzz
+    $imageFile = UploadedFile::fake()->image('avatar.jpg');
+    $image = Image::make($imageFile)->encode();
     $filename = date('Y-m-d_h-m-s') . '_' . str_random('4') . '.jpeg';
     $image->save( storage_path('app/full_size/') . 'full_size_' . $filename);
     $image->widen(500, function ($constraint) {
@@ -16,7 +19,7 @@ $factory->define(\App\Design::class, function (Faker $faker) {
     return [
         'description' => $faker->sentence,
         'image' => $filename,
-        'small_image' => Storage::url( 'small_size_' . $filename),
+        'small_image' => Storage::url('small_size_' . $filename),
         'is_download_allowed' => true,
         'original_width' => '1980',
         'original_height' => '1200',

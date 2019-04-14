@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
-use Illuminate\Validation\ValidationException;
 use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Http\Resources\Design as DesignResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\Http\Resources\User as UserResource;
 use App\Http\Requests\SignUp;
 class AuthController extends Controller
@@ -38,9 +39,7 @@ class AuthController extends Controller
                 "message"   => "user created successfully",
                 "returned"  => "the created user",
                 "data"    => [
-                    "user"    => $user->loadMissing(
-                      'seenComments', 'designs', 'following',
-                      'followers', 'likedDesigns', 'comments'),
+                    "user"    => new UserResource($user),
                     "users" => null,
                     "design" => null,
                     "designs" => null,
