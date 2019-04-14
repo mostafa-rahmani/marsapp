@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\Design as DesignResource;
+use App\Http\Resources\DesignCollection;
 use App\Http\Requests\DesignRequest;
 use App\User;
 use Illuminate\Support\Facades\Gate;
@@ -22,9 +23,8 @@ class DesignsController extends Controller
 
     public function index()
     {
-        $designs = Design::where('blocked', '0')
-                    ->paginate(20);
-        return response()->json($designs, 200);
+        return new DesignCollection(Design::where('blocked', '0')
+        ->paginate(20));
     }
 
     public function show(Request $request)
@@ -375,7 +375,7 @@ class DesignsController extends Controller
             foreach ($user->designs()->get() as $design)
                 array_push($designs, $design);
 
-        return response()->json($this->paginateAnswers($designs, 20), 200);
+        return response()->json($this->paginateAnswers(new DesignCollection($designs), 20), 200);
     }
 
     /**
@@ -389,8 +389,7 @@ class DesignsController extends Controller
         $this->validate($request, [
             'ids' => 'Array|required'
         ]);
-        $designs = Design::find($request->input('ids') );
-        return response()->json($this->paginateAnswers($designs->toArray(), 20), 200);
+        return  new DesignCollection( Design::whereIn('id', $request->input('ids'))->paginate(20) );
     }
 
     /**

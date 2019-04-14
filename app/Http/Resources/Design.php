@@ -15,7 +15,7 @@ class Design extends JsonResource
     public function toArray($request)
     {
         return [
-            "id" => 22,
+            "id" => $this->id,
             "description" => $this->description,
             "image" => $this->image,
             "small_image" => $this->small_image,
@@ -29,7 +29,7 @@ class Design extends JsonResource
             "user" => new UserInfo($this->user),
             "comments" => $this->comments,
             "download_users" => $this->download_users,
-            "likes" => $this->likes()->get(),
+            "likes" => UserInfo::collection($this->likes()->get()),
             "created_at" => $this->created_at->toDateTimeString(),
             "updated_at" => $this->updated_at->toDateTimeString(),
         ];
