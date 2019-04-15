@@ -27,7 +27,7 @@ class User extends JsonResource
             "email" => $this->email,
             "bio"   => $this->bio,
             "blocked"   => $this->blocked,
-            "instagram" => $this->instagram,
+            "instagram" => $this->instagram,// rh.mostafa
             "instagram_url" => $this->instagram ? 'https://www.instagram.com/' . $this->instagram  : null,
 
             "profile_image" => $this->profile_image ? url('/') . '/' .

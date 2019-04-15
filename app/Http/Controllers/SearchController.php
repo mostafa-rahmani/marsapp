@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Design;
 use App\User;
 use Illuminate\Http\Request;
+use App\Http\Resources\Design as DesignResource;
+use App\Http\Resources\User as UserResource;
 class SearchController extends Controller
 {
 
@@ -28,21 +30,15 @@ class SearchController extends Controller
         $user_result = User::search($request->input('query'))->get();
         $design_result = Design::search($request->input('query'))->get();
 
-        foreach ($user_result as $user) {
-            $user->loadMissing(
-                'seenComments', 'designs', 'following',
-                'followers', 'likedDesigns', 'comments');
-        }
-          
         $users = [];   $designs = [];
         foreach ($user_result as $item){
-            array_push($designs, $item);
+            array_push($users, new UserResrouce($item));
         }
         foreach ($design_result as $item){
-            array_push($users, $item);
+            array_push($designs, new DesignResource($item));
         }
         $result = array_merge($users, $designs);
-        return response($this->paginateAnswers($result, 20), 201);
+        return response($this->paginateAnswers($result, 20), 200);
     }
 
 
