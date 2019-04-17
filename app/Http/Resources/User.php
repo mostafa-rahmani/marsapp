@@ -28,11 +28,11 @@ class User extends JsonResource
             "bio"   => $this->bio,
             "blocked"   => $this->blocked,
             "instagram" => $this->instagram,// rh.mostafa
-            "instagram_url" => $this->instagram ? 'https://www.instagram.com/' . $this->instagram  : null,
+            "instagram_url" => $this->instagram ?  'https://www.instagram.com/' . $this->instagram  : null,
 
-            "profile_image" => $this->profile_image ? url('/') . '/' .
+            "profile_image" => $this->profile_image ? url('/') .
                 Storage::url('public/' . $this->profile_image ) : null,
-            "profile_background"  => $this->profile_background ? url('/') . '/' .
+            "profile_background"  => $this->profile_background ? url('/') .
                 Storage::url('public/' . $this->profile_background) : null,
 
             "download_count"    => $download_count,

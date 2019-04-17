@@ -46,7 +46,7 @@ class DesignsController extends Controller
                         "comments"   => null
                     ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $response =  [
                 "status"    =>  "error",
@@ -193,7 +193,7 @@ class DesignsController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response =  array(
             "status"    =>  "error",
@@ -235,7 +235,7 @@ class DesignsController extends Controller
                         "users"     => null, "design" => null, "designs" => null, "comment"    => null,  "comments"   => null
                     ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $response =  [
                 "status"    =>  "error",
@@ -326,7 +326,7 @@ class DesignsController extends Controller
                         "comments"   => null
                     ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $response =  [
                 "status"    =>  "error",
@@ -375,7 +375,7 @@ class DesignsController extends Controller
             foreach ($user->designs()->get() as $design)
                 array_push($designs, $design);
 
-        return response()->json($this->paginateAnswers(new DesignCollection($designs), 20), 200);
+        return response()->json($this->paginateAnswers(new DesignCollection($designs), 20), 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
     /**
@@ -416,7 +416,7 @@ class DesignsController extends Controller
                         "comments" => ""
                     ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $design->likes()->attach($request->user());
             $response = [
@@ -433,7 +433,7 @@ class DesignsController extends Controller
                     "comments" => ""
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response = [
             "status" => "error",
@@ -477,7 +477,7 @@ class DesignsController extends Controller
                     "comments" => ""
                 ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $response = [
             "status" => "ok",
@@ -493,7 +493,7 @@ class DesignsController extends Controller
                 "comments" => ""
             ]
         ];
-            return response()->json($response, 200);
+            return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response = [
             "status" => "error",

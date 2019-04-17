@@ -58,7 +58,7 @@ class UsersController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response = [
             "status"    =>  "error",
@@ -147,7 +147,7 @@ class UsersController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 200);
+        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
     /**
@@ -199,7 +199,7 @@ class UsersController extends Controller
                               "comments"   => null
                           ]
                       ];
-                      return response()->json($response, 200);
+                      return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
                   }
                   // if everything was ok
                   $logged_in_user->following()->attach($subject_user->id);
@@ -219,7 +219,7 @@ class UsersController extends Controller
                       "comments"   => null
                       ]
                       ];
-                  return response()->json($response, 200);
+                  return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             // if user could not be found
             $response = [
@@ -290,7 +290,7 @@ class UsersController extends Controller
                       "comments" => null
                     ]
                   ];
-                  return response()->json($response, 200);
+                  return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             // if auth user is not following subeject user then we just return the user and subject
             $response = [
@@ -309,7 +309,7 @@ class UsersController extends Controller
                     "comments" => null
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         // if subject user could not be found in the Database
         $response = [
@@ -352,7 +352,7 @@ class UsersController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 200);
+        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
     public function followers(User $user)
@@ -374,7 +374,7 @@ class UsersController extends Controller
             ]
         ];
 
-        return response()->json($response, 200);
+        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
 }

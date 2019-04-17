@@ -47,7 +47,7 @@ class AuthController extends Controller
                     "comments" => null,
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         return response()->json(['msg' => 'some thing went wrong try again'], 500);
     }
@@ -165,7 +165,7 @@ class AuthController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 200);
+        return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
 
@@ -187,9 +187,7 @@ class AuthController extends Controller
         $user->password = bcrypt($data["password"]);
         $user->save();
         // a email sed to user
-        return response()->json($user->loadMissing(
-            'seenComments', 'designs', 'following',
-            'followers', 'likedDesigns', 'comments'));
+        return response()->json(new UserResource($user) , 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
 }

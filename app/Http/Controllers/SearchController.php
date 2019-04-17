@@ -38,7 +38,7 @@ class SearchController extends Controller
             array_push($designs, new DesignResource($item));
         }
         $result = array_merge($users, $designs);
-        return response($this->paginateAnswers($result, 20), 200);
+        return response($this->paginateAnswers($result, 20), 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
 
