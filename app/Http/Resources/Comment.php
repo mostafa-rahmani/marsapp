@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use App\Http\Resources\User as UserResource;
 class Comment extends JsonResource
 {
     /**
@@ -22,7 +22,7 @@ class Comment extends JsonResource
             "updated_at"    => $this->updated_at,
             "user_id"   => $this->user_id,
             "design_id" => $this->design_id,
-            "user"  => $this->user(),
+            "user"  => new UserResource($this->user()),
             "design"    => "design"
         ];
     }

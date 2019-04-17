@@ -110,7 +110,7 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json(new UserResource($request->user) , 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
 

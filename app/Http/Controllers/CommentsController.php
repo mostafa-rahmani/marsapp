@@ -6,8 +6,9 @@ use App\Comment;
 use App\Design;
 use App\User;
 use App\Http\Resources\User as UserResource;
-use Illuminate\Http\Request;
 use App\Http\Resources\Comment as CommentResource;
+use App\Http\Resources\Design as DesignResource;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 
@@ -31,7 +32,7 @@ class CommentsController extends Controller
                     "users"     => null,
                     "design"    => null,
                     "designs"    => null,
-                    "comment"    => $comment->loadMissing('user'),
+                    "comment"    => new CommentResource($comment),
                     "comments"   => null
                 ]
             ];
@@ -95,9 +96,9 @@ class CommentsController extends Controller
                         "data"      => [
                             "user"      => new UserResource(User::find($request->user()->id)),
                             "users"     => null,
-                            "design" => Design::find($comment),
+                            "design" =>    new DesignResource(Design::find($comment)),
                             "designs"    => null,
-                            "comment"    => $comment->loadMissing('user'),
+                            "comment"    => new CommentResource($comment),
                             "comments"   => null
                         ]
                     ];
