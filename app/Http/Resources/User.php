@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 use App\Http\Resources\DesignCollection;
+use App\Http\Resources\Comment as CommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 

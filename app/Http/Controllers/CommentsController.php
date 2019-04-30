@@ -36,7 +36,7 @@ class CommentsController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 200);
+            return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response =  [
             "status"    =>  "error",
@@ -52,7 +52,7 @@ class CommentsController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 404);
+        return response()->json($response, 404, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
 
     }
 
@@ -85,7 +85,7 @@ class CommentsController extends Controller
                             "comments"   => null
                         ]
                     ];
-                    return response()->json($response, 400);
+                    return response()->json($response, 400, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
                 }
                 $comment->update($request->only('content', 'seen'));
                     $response =  [
@@ -102,7 +102,7 @@ class CommentsController extends Controller
                             "comments"   => null
                         ]
                     ];
-                    return response()->json($response, 200);
+                    return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
 
             }else{
                 $response =  [
@@ -121,7 +121,7 @@ class CommentsController extends Controller
                         "comments"   => null
                     ]
                 ];
-                return response()->json($response, 403);
+                return response()->json($response, 403, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
         }
         $response =  [
@@ -138,7 +138,7 @@ class CommentsController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 404);
+        return response()->json($response, 404, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
     public function delete(Request $request)
@@ -162,7 +162,7 @@ class CommentsController extends Controller
                             "comments"   => null
                         ]
                     ];
-                    return response()->json($response, 204);
+                    return response()->json($response, 204, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
                 }
                 $response =  [
                     "status"    =>  "error",
@@ -180,7 +180,7 @@ class CommentsController extends Controller
                         "comments"   => null
                     ]
                 ];
-                return response()->json($response, 500);
+                return response()->json($response, 500, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
 
             }
             $response =  [
@@ -199,7 +199,7 @@ class CommentsController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 403);
+            return response()->json($response, 403, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         $response =  [
             "status"    =>  "error",
@@ -215,7 +215,7 @@ class CommentsController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 404);
+        return response()->json($response, 404, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 
     /**
@@ -245,7 +245,7 @@ class CommentsController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 400);
+            return response()->json($response, 400, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         if ($design = Design::find($request->design)){
             $comment = new Comment();
@@ -267,7 +267,7 @@ class CommentsController extends Controller
                         "comments"   => null
                     ]
                 ];
-                return response()->json($response, 200);
+                return response()->json($response, 200, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
             }
             $response =  [
                 "status"    =>  "error",
@@ -285,7 +285,7 @@ class CommentsController extends Controller
                     "comments"   => null
                 ]
             ];
-            return response()->json($response, 500);
+            return response()->json($response, 500, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
         }
         // if Design Could not be found
         $response =  [
@@ -302,6 +302,6 @@ class CommentsController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 404);
+        return response()->json($response, 404, [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
     }
 }
