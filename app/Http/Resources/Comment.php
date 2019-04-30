@@ -18,12 +18,11 @@ class Comment extends JsonResource
             "id" => $this->id,
             "content" => $this->content,
             "seen"  => $this->seen,
-            "created_at"   => $this->created_at,
-            "updated_at"    => $this->updated_at,
             "user_id"   => $this->user_id,
             "design_id" => $this->design_id,
             "user"  => new UserInfo($this->user),
-            "design"    => "design"
+            "created_at"    => $this->created_at->toDateTimeString(),
+            "updated_at"    => $this->updated_at->toDateTimeString()
         ];
     }
 }
