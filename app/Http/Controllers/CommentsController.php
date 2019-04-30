@@ -215,7 +215,7 @@ class CommentsController extends Controller
                 "comments"   => null
             ]
         ];
-        return response()->json($response, 200);
+        return response()->json($response, 404);
     }
 
     /**
@@ -261,9 +261,9 @@ class CommentsController extends Controller
                     "data"      => [
                         "user"      => new UserResource($request->user()),
                         "users"     => null,
-                        "design" => Design::find($design->id),
+                        "design" => new DesignResource(Design::find($design->id)),
                         "designs"    => null,
-                        "comment"    => $comment->loadMissing('user'),
+                        "comment"    => new CommentResource($comment),
                         "comments"   => null
                     ]
                 ];

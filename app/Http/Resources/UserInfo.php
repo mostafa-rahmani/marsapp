@@ -21,6 +21,7 @@ class UserInfo extends JsonResource
         foreach ($this->designs as $design){
             $download_count = $download_count + $design->download_users()->count();
         }
+
         $arrObj = [
             "id"    => $this->id,
             "username" => $this->username,

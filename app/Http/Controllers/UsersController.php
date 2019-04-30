@@ -169,7 +169,10 @@ class UsersController extends Controller
                       "returned"  => null,
                       "data"      => [
                         "user"      => null,
-                        "users"     => null,
+                        "users"     => [
+                            new UserResource( User::find($request->user()->id) ),
+                            new UserResource( User::find($request->user) )
+                        ],
                         "design"    => null,
                         "designs"    => null,
                         "comment"    => null,

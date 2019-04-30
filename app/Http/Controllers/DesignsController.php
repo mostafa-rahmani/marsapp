@@ -409,11 +409,11 @@ class DesignsController extends Controller
                     "returned" => "liked design and authenticated user",
                     "data"  => [
                         "user" => new UserResource(User::find($request->user()->id)),
-                        "users" => "",
+                        "users" => null,
                         "design" => new DesignResource(Design::find($request->design)),
-                        "designs" => "",
-                        "comment" => "",
-                        "comments" => ""
+                        "designs" => null,
+                        "comment" => null,
+                        "comments" => null
                     ]
                 ];
                 return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
@@ -426,11 +426,11 @@ class DesignsController extends Controller
                 "returned" => "liked design and authenticated user",
                 "data"  => [
                     "user" => new UserResource(User::find($request->user()->id)),
-                    "users" => "",
+                    "users" => null,
                     "design" => new DesignResource(Design::find($request->design)),
-                    "designs" => "",
-                    "comment" => "",
-                    "comments" => ""
+                    "designs" => null,
+                    "comment" => null,
+                    "comments" => null
                 ]
             ];
             return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
@@ -470,11 +470,11 @@ class DesignsController extends Controller
                 "returned" => "disliked design and authenticated user",
                 "data"  => [
                     "user" => new UserResource(User::find($request->user()->id)),
-                    "users" => "",
+                    "users" => null,
                     "design" => new DesignResource(Design::find($request->design)),
-                    "designs" => "",
-                    "comment" => "",
-                    "comments" => ""
+                    "designs" => null,
+                    "comment" => null,
+                    "comments" => null
                 ]
                 ];
                 return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
@@ -486,11 +486,11 @@ class DesignsController extends Controller
             "returned" => "disliked design and authenticated user",
             "data"  => [
                 "user" => new UserResource(User::find($request->user()->id)),
-                "users" => "",
+                "users" => null,
                 "design" => new DesignResource(Design::find($request->design)),
-                "designs" => "",
-                "comment" => "",
-                "comments" => ""
+                "designs" => null,
+                "comment" => null,
+                "comments" => null
             ]
         ];
             return response()->json($response, 200 , [], JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT);
