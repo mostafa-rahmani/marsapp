@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 use App\Http\Resources\UserInfo;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class Design extends JsonResource
 {
@@ -18,7 +19,7 @@ class Design extends JsonResource
             "id" => $this->id,
             "description" => $this->description,
             "image" => $this->image,
-            "small_image" => $this->small_image,
+            "small_image" => url('/') . Storage::url('public/' . 'sm_' . $this->image),
             "original_width" => $this->original_width,
             "original_height" => $this->original_height,
             "is_download_allowed" => $this->is_download_allowed,

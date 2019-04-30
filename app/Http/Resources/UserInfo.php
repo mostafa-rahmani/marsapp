@@ -26,12 +26,12 @@ class UserInfo extends JsonResource
             "id"    => $this->id,
             "username" => $this->username,
             "email" => $this->email,
-            "profile_image" => $this->profile_image ? url('/') . '/' .
+            "profile_image" => $this->profile_image ? url('/') .
                 Storage::url('public/' . $this->profile_image ) : null,
             "bio"   => $this->bio,
             "blocked"   => $this->blocked,
             "instagram" => $this->instagram,
-            "profile_background"  => $this->profile_background ? url('/') . '/' .
+            "profile_background"  => $this->profile_background ? url('/') .
                 Storage::url('public/' . $this->profile_background) : null,
             "instagram_url" => $this->instagram ? 'https://www.instagram.com/' . $this->instagram  : null,
             "download_count"    => $download_count,
