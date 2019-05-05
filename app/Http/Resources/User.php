@@ -42,9 +42,9 @@ class User extends JsonResource
             'following' => $this->following()->get(),
             'followers' => $this->followers()->get(),
             'liked_designs' => $this->likedDesigns()->get(),
-            'downloads' =>  $this->downloads()->get(),
-            'seen_comments' => $this->seenComments()->get(),
-            "comments"      => $this->comments()->get(),
+            'downloads' =>  new DesignCollection($this->downloads()->get()),
+            'seen_comments' => CommentResource::collection($this->seenComments()->get()),
+            "comments"      => CommentResource::collection($this->comments()->get()),
             "created_at"    => $this->created_at->toDateTimeString(),
             "updated_at"    => $this->updated_at->toDateTimeString(),
         ];

@@ -39,7 +39,7 @@ class Controller extends BaseController
         $page = Input::get('page', 1);
 
         $offset = ($page * $perPage) - $perPage;
-
+        return response()->json($this->transformAnswers($answers, $offset, $perPage), 200);
         $paginator = new LengthAwarePaginator(
             $this->transformAnswers($answers, $offset, $perPage),
             count($answers),

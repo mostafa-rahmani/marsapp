@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 use App\Http\Resources\UserInfo;
+use App\Http\Resources\Comment as CommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +16,7 @@ class Design extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $result = [
             "id" => $this->id,
             "description" => $this->description,
             "image" => $this->image,
@@ -28,11 +29,12 @@ class Design extends JsonResource
             "download_count" =>  $this->download_users()->count(),
             "like_count" => $this->likes()->count(),
             "user" => new UserInfo($this->user),
-            "comments" => $this->comments,
+            "comments" => CommentResource::collection($this->comments),
             "download_users" => $this->download_users,
             "likes" => UserInfo::collection($this->likes()->get()),
             "created_at" => $this->created_at->toDateTimeString(),
             "updated_at" => $this->updated_at->toDateTimeString(),
         ];
+        return $result;
     }
 }

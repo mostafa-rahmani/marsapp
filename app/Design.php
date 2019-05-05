@@ -44,6 +44,7 @@ class Design extends Model
     }
     public function getSmallImageAttribute($value){
         return url()->to("\\") . Storage::url('public/' . 'sm_' . $this->image);
+        // return stripslashes($this->small_image);
     }
     public function likes()
     {

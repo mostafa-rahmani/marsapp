@@ -8,9 +8,12 @@ use App\Http\Resources\Design as DesignResource;
 use App\Http\Resources\DesignCollection;
 use App\Http\Requests\DesignRequest;
 use App\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Pagination\Paginator;
+use App\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class DesignsController extends Controller
@@ -23,8 +26,11 @@ class DesignsController extends Controller
 
     public function index()
     {
-        return new DesignCollection(Design::where('blocked', '0')
-        ->paginate(20));
+        $results = [];
+        foreach (Design::where('blocked', '0')->get()->all() as $design) {
+            array_push($results, new DesignResource($design));
+        }
+        return new DesignCollection(Design::where('blocked', '0')->paginate(20));
     }
 
     public function show(Request $request)
@@ -389,7 +395,8 @@ class DesignsController extends Controller
         $this->validate($request, [
             'ids' => 'Array|required'
         ]);
-        return  new DesignCollection( Design::whereIn('id', $request->input('ids'))->paginate(20) );
+        $results = [];
+        return new DesignCollection(Design::whereIn('id', $request->input('ids'))->paginate(20));
     }
 
     /**
