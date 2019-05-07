@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 use App\Http\Resources\DesignCollection;
+use App\Http\Resources\UserInfo;
 use App\Http\Resources\Comment as CommentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -39,9 +40,9 @@ class User extends JsonResource
             "download_count"    => $download_count,
             "likesCount"    => $this->likedDesigns()->count(),
             'designs' => new DesignCollection($this->designs),
-            'following' => $this->following()->get(),
-            'followers' => $this->followers()->get(),
-            'liked_designs' => $this->likedDesigns()->get(),
+            'following' => UserInfo::collection($this->following()->get()),
+            'followers' => UserInfo::collection($this->followers()->get()),
+            'liked_designs' => new DesignCollection($this->likedDesigns()->get()),
             'downloads' =>  new DesignCollection($this->downloads()->get()),
             'seen_comments' => CommentResource::collection($this->seenComments()->get()),
             "comments"      => CommentResource::collection($this->comments()->get()),

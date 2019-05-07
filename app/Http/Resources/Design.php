@@ -30,7 +30,7 @@ class Design extends JsonResource
             "like_count" => $this->likes()->count(),
             "user" => new UserInfo($this->user),
             "comments" => CommentResource::collection($this->comments),
-            "download_users" => $this->download_users,
+            "download_users" => UserInfo::collection($this->download_users),
             "likes" => UserInfo::collection($this->likes()->get()),
             "created_at" => $this->created_at->toDateTimeString(),
             "updated_at" => $this->updated_at->toDateTimeString(),
