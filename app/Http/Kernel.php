@@ -19,8 +19,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        \App\Http\Middleware\PrettyPrintJson::class,
-
+        
     ];
 
     /**
@@ -40,6 +39,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            \App\Http\Middleware\PrettyPrintJson::class,
             'throttle:60,1',
             'bindings',
         ],
